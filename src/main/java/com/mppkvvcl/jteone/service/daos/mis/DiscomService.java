@@ -1,0 +1,75 @@
+package com.mppkvvcl.jteone.service.daos.mis;
+
+import com.mppkvvcl.jteone.service.process.ResourceService;
+import com.mppkvvcl.jteone.utility.GlobalUtility;
+import com.mppkvvcl.misdao.daos.DiscomDAO;
+import com.mppkvvcl.misdao.interfaces.DiscomInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("misDiscomService")
+public class DiscomService {
+
+    private static final Logger log = LoggerFactory.getLogger(DiscomService.class);
+
+    private static DiscomInterface discom;
+    private static String discomLogoAsBase64;
+    private static String mpstateLogoAsBase64;
+    private static String whatsappQRAsBase64;
+
+    @Autowired
+    @Qualifier("misDiscomDAO")
+    private DiscomDAO discomDAO;
+
+    @Autowired
+    private ResourceService resourceService;
+
+    public List<? extends DiscomInterface> getAll() {
+
+        return discomDAO.getAll();
+    }
+
+    public DiscomInterface get() {
+        if (discom != null) return discom;
+
+        final List<? extends DiscomInterface> discomList = getAll();
+        if (!GlobalUtility.isEmpty(discomList)) discom = discomList.getFirst();
+
+        return discom;
+    }
+
+    public String getDiscomLogoAsBase64() {
+        if (discomLogoAsBase64 != null) return discomLogoAsBase64;
+
+        final DiscomInterface discom = get();
+        if (discom == null) return null;
+
+        discomLogoAsBase64 = resourceService.convertPngToBase64(resourceService.getImage(discom.getShortName().toLowerCase() + "." + ResourceService.IMAGE_EXTENSION_PNG, ResourceService.IMAGE_TYPE_LOGO));
+        return discomLogoAsBase64;
+    }
+
+    public String getMPStateLogoAsBase64() {
+        if (mpstateLogoAsBase64 != null) return mpstateLogoAsBase64;
+
+        final DiscomInterface discom = get();
+        if (discom == null) return null;
+
+        mpstateLogoAsBase64 = resourceService.convertPngToBase64(resourceService.getImage("state_mp." + ResourceService.IMAGE_EXTENSION_PNG, ResourceService.IMAGE_TYPE_LOGO));
+        return mpstateLogoAsBase64;
+    }
+
+    public String getWhatsappQRAsBase64() {
+        if (whatsappQRAsBase64 != null) return whatsappQRAsBase64;
+
+        final DiscomInterface discom = get();
+        if (discom == null) return null;
+
+        whatsappQRAsBase64 = resourceService.convertPngToBase64(resourceService.getImage("whatsapp_" + discom.getShortName().toLowerCase() + "." + ResourceService.IMAGE_EXTENSION_PNG, ResourceService.IMAGE_TYPE_QR));
+        return whatsappQRAsBase64;
+    }
+}
