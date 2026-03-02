@@ -1,14 +1,13 @@
 package com.mppkvvcl.jteone.dtos.templates.pdfbill;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReadInformation {
 
     private String meterSrNo;
-    private LocalDate date;
+    private String date;
     private String type;
     private String source;
 
@@ -16,7 +15,6 @@ public class ReadInformation {
 
     private BigDecimal solarPlantCapacity;
     private BigDecimal residualUnit;
-    private BigDecimal lastMonthResidualUnit;
     private boolean isChild;
 
     private List<ReadDetail> readDetailList;
@@ -33,11 +31,11 @@ public class ReadInformation {
         this.meterSrNo = meterSrNo;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -79,14 +77,6 @@ public class ReadInformation {
 
     public void setResidualUnit(BigDecimal residualUnit) {
         this.residualUnit = residualUnit;
-    }
-
-    public BigDecimal getLastMonthResidualUnit() {
-        return lastMonthResidualUnit;
-    }
-
-    public void setLastMonthResidualUnit(BigDecimal lastMonthResidualUnit) {
-        this.lastMonthResidualUnit = lastMonthResidualUnit;
     }
 
     public boolean isChild() {

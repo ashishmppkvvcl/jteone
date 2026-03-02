@@ -1,7 +1,6 @@
 package com.mppkvvcl.jteone.dtos.templates.pdfbill;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 public class BillSummary {
 
@@ -16,20 +15,20 @@ public class BillSummary {
     private String paymentQuickResponseString;
     private String paymentQuickResponseBase64;
 
-    private LocalDate dueDate;
-    private LocalDate chequeDueDate;
+    private String dueDate;
+    private String chequeDueDate;
     private BigDecimal consumption;
     private String meterReaderName;
     private String meterReaderContactNo;
 
-    private LocalDate billDate;
+    private String billDate;
     private String billType;
     private String billBasis;
     private BigDecimal dailyAverageConsumption;
     private BigDecimal dailyAverageBill;
     private BigDecimal sdHeld;
     private BigDecimal sdPending;
-    private LocalDate pdcDate;
+    private String pdcDate;
 
     public String getBillNo() {
         return billNo;
@@ -103,19 +102,19 @@ public class BillSummary {
         this.paymentQuickResponseBase64 = paymentQuickResponseBase64;
     }
 
-    public LocalDate getDueDate() {
+    public String getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDate dueDate) {
+    public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
     }
 
-    public LocalDate getChequeDueDate() {
+    public String getChequeDueDate() {
         return chequeDueDate;
     }
 
-    public void setChequeDueDate(LocalDate chequeDueDate) {
+    public void setChequeDueDate(String chequeDueDate) {
         this.chequeDueDate = chequeDueDate;
     }
 
@@ -143,11 +142,11 @@ public class BillSummary {
         this.meterReaderContactNo = meterReaderContactNo;
     }
 
-    public LocalDate getBillDate() {
+    public String getBillDate() {
         return billDate;
     }
 
-    public void setBillDate(LocalDate billDate) {
+    public void setBillDate(String billDate) {
         this.billDate = billDate;
     }
 
@@ -199,18 +198,18 @@ public class BillSummary {
         this.sdPending = sdPending;
     }
 
-    public LocalDate getPdcDate() {
+    public String getPdcDate() {
         return pdcDate;
     }
 
-    public void setPdcDate(LocalDate pdcDate) {
+    public void setPdcDate(String pdcDate) {
         this.pdcDate = pdcDate;
     }
 
     public BillSummary() {
     }
 
-    public BillSummary(String billNo, String billMonth, BigDecimal payableAmount, BigDecimal payableTillDueDate, BigDecimal payableAfterDueDate, BigDecimal currentBill, BigDecimal arrear, String paymentQuickResponseString, String paymentQuickResponseBase64, LocalDate dueDate, LocalDate chequeDueDate, BigDecimal consumption, String meterReaderName, String meterReaderContactNo, LocalDate billDate, String billType, String billBasis, BigDecimal dailyAverageConsumption, BigDecimal dailyAverageBill, BigDecimal sdHeld, BigDecimal sdPending, LocalDate pdcDate) {
+    public BillSummary(String billNo, String billMonth, BigDecimal payableAmount, BigDecimal payableTillDueDate, BigDecimal payableAfterDueDate, BigDecimal currentBill, BigDecimal arrear, String paymentQuickResponseString, String paymentQuickResponseBase64, String dueDate, String chequeDueDate, BigDecimal consumption, String meterReaderName, String meterReaderContactNo, String billDate, String billType, String billBasis, BigDecimal dailyAverageConsumption, BigDecimal dailyAverageBill, BigDecimal sdHeld, BigDecimal sdPending, String pdcDate) {
         this.billNo = billNo;
         this.billMonth = billMonth;
         this.payableAmount = payableAmount;

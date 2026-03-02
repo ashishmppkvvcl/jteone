@@ -49,6 +49,8 @@ public class BillInformation {
     private BigDecimal md;
     private BigDecimal previousRead;
     private BigDecimal meteredUnit;
+    private BigDecimal currentRead;
+    private BigDecimal surchargeDemanded;
 
     public BigDecimal getEnergyCharge() {
         return energyCharge;
@@ -346,10 +348,26 @@ public class BillInformation {
         this.meteredUnit = meteredUnit;
     }
 
+    public BigDecimal getCurrentRead() {
+        return currentRead;
+    }
+
+    public void setCurrentRead(BigDecimal currentRead) {
+        this.currentRead = currentRead;
+    }
+
+    public BigDecimal getSurchargeDemanded() {
+        return surchargeDemanded;
+    }
+
+    public void setSurchargeDemanded(BigDecimal surchargeDemanded) {
+        this.surchargeDemanded = surchargeDemanded;
+    }
+
     public BillInformation() {
     }
 
-    public BillInformation(BigDecimal energyCharge, BigDecimal fppas, BigDecimal fixedCharge, BigDecimal subTotalOne, BigDecimal electricityDuty, BigDecimal ccbAdjustment, BigDecimal subTotalTwo, BigDecimal penalCharge, BigDecimal pfSurchargeOrIncentive, BigDecimal asdInstallment, BigDecimal todRebateOrSurcharge, BigDecimal sdInterest, BigDecimal locdFactorIncentive, BigDecimal lockCredit, BigDecimal employeeRebate, BigDecimal prepaidPaymentRebate, BigDecimal onlinePaymentRebate, BigDecimal promptPaymentIncentive, BigDecimal advancePaymentIncentive, BigDecimal demandSideIncentive, BigDecimal wheelingCharge, BigDecimal subTotalThree, BigDecimal subsidy, BigDecimal subTotalFour, BigDecimal principalArrear, BigDecimal cumulativeSurcharge, BigDecimal asdArrear, BigDecimal netBill, Long paymentForBillAndVigilance, BigDecimal paymentForSmartMeterRCDC, BigDecimal vigilanceDueAmount, BigDecimal vigilanceDueInterestAmount, BigDecimal totalPayableAmount, BigDecimal pf, BigDecimal md, BigDecimal previousRead, BigDecimal meteredUnit) {
+    public BillInformation(BigDecimal energyCharge, BigDecimal fppas, BigDecimal fixedCharge, BigDecimal subTotalOne, BigDecimal electricityDuty, BigDecimal ccbAdjustment, BigDecimal subTotalTwo, BigDecimal penalCharge, BigDecimal pfSurchargeOrIncentive, BigDecimal asdInstallment, BigDecimal todRebateOrSurcharge, BigDecimal sdInterest, BigDecimal locdFactorIncentive, BigDecimal lockCredit, BigDecimal employeeRebate, BigDecimal prepaidPaymentRebate, BigDecimal onlinePaymentRebate, BigDecimal promptPaymentIncentive, BigDecimal advancePaymentIncentive, BigDecimal demandSideIncentive, BigDecimal wheelingCharge, BigDecimal subTotalThree, BigDecimal subsidy, BigDecimal subTotalFour, BigDecimal principalArrear, BigDecimal cumulativeSurcharge, BigDecimal asdArrear, BigDecimal netBill, Long paymentForBillAndVigilance, BigDecimal paymentForSmartMeterRCDC, BigDecimal vigilanceDueAmount, BigDecimal vigilanceDueInterestAmount, BigDecimal totalPayableAmount, BigDecimal pf, BigDecimal md, BigDecimal previousRead, BigDecimal meteredUnit, BigDecimal currentRead, BigDecimal surchargeDemanded) {
         this.energyCharge = energyCharge;
         this.fppas = fppas;
         this.fixedCharge = fixedCharge;
@@ -387,5 +405,7 @@ public class BillInformation {
         this.md = md;
         this.previousRead = previousRead;
         this.meteredUnit = meteredUnit;
+        this.currentRead = currentRead;
+        this.surchargeDemanded = surchargeDemanded;
     }
 }

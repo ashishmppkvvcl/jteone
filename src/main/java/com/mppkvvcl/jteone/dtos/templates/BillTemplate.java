@@ -21,6 +21,7 @@ public class BillTemplate implements JteTemplateInterface {
     private List<ReadHistoryInformation> readHistoryInformationList;
     private MeterReplacementInformation meterReplacementInformation;
     private List<BillCalculationInformation> billCalculationInformationList;
+    private List<NetMeterChildInformation> netMeterChildInformationList;
     private List<VigilanceInformation> vigilanceInformationList;
     private List<AdjustmentInformation> adjustmentInformationList;
     private List<ECGRFInformation> ecgrfInformationList;
@@ -244,6 +245,14 @@ public class BillTemplate implements JteTemplateInterface {
         this.meterReplacementInformation = meterReplacementInformation;
     }
 
+    public List<NetMeterChildInformation> getNetMeterChildInformationList() {
+        return netMeterChildInformationList;
+    }
+
+    public void setNetMeterChildInformationList(List<NetMeterChildInformation> netMeterChildInformationList) {
+        this.netMeterChildInformationList = netMeterChildInformationList;
+    }
+
     public List<BillCalculationInformation> getBillCalculationInformationList() {
         return billCalculationInformationList;
     }
@@ -278,21 +287,22 @@ public class BillTemplate implements JteTemplateInterface {
 
     @Override
     public String toString() {
-        return "BillPojo{" +
+        return "BillTemplate{" +
                 "templateInformation=" + templateInformation +
                 ", companyInformation=" + companyInformation +
                 ", consumerInformation=" + consumerInformation +
                 ", connectionInformation=" + connectionInformation +
-                ", billSummary=" + billSummary +
                 ", contactInformationList=" + contactInformationList +
                 ", messages=" + messages +
                 ", readInformation=" + readInformation +
+                ", billSummary=" + billSummary +
                 ", billInformation=" + billInformation +
                 ", todInformation=" + todInformation +
                 ", paymentHistoryInformationList=" + paymentHistoryInformationList +
                 ", readHistoryInformationList=" + readHistoryInformationList +
                 ", meterReplacementInformation=" + meterReplacementInformation +
                 ", billCalculationInformationList=" + billCalculationInformationList +
+                ", netMeterChildInformationList=" + netMeterChildInformationList +
                 ", vigilanceInformationList=" + vigilanceInformationList +
                 ", adjustmentInformationList=" + adjustmentInformationList +
                 ", ecgrfInformationList=" + ecgrfInformationList +

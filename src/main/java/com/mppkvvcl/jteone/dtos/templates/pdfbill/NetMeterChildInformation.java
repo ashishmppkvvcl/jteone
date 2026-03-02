@@ -87,18 +87,18 @@ public class NetMeterChildInformation {
         this.finalConsumption = finalConsumption;
     }
 
-    @Override
-    public String toString() {
-        return "NetMeterChildInformation{" +
-                "index=" + index +
-                ", consumerNo='" + consumerNo + '\'' +
-                ", ratio=" + ratio +
-                ", currentRead=" + currentRead +
-                ", previousRead=" + previousRead +
-                ", mf=" + mf +
-                ", meterConsumption=" + meterConsumption +
-                ", assessment=" + assessment +
-                ", finalConsumption=" + finalConsumption +
-                '}';
+    public NetMeterChildInformation() {
+    }
+
+    public NetMeterChildInformation(int index, String consumerNo, BigDecimal ratio, BigDecimal currentRead, BigDecimal previousRead, BigDecimal mf, BigDecimal meterConsumption, BigDecimal assessment, BigDecimal finalConsumption) {
+        this.index = index;
+        this.consumerNo = consumerNo;
+        this.ratio = ratio;
+        this.currentRead = currentRead;
+        this.previousRead = previousRead;
+        this.mf = mf;
+        this.meterConsumption = meterConsumption;
+        this.assessment = assessment;
+        this.finalConsumption = finalConsumption;
     }
 }

@@ -147,12 +147,8 @@ public class BillServiceImpl {
             return null;
         }
 
-        final String languageMiscellaneous = consumerMiscellaneousInformationService.getActivePropertyValueByConsumerNoAndPropertyName(billIdentifierDTO.getConsumerNo(), ConsumerMiscellaneousInformationInterface.PROPERTY_NAME_PDC_BILL_MONTH);
-        if (languageMiscellaneous == null) {
-            messageDTO.setMessage("No preferred language configuration found for " + billIdentifierDTO.getConsumerNo());
-            log.info(messageDTO.getMessage());
-            return null;
-        }
+        String languageMiscellaneous = consumerMiscellaneousInformationService.getActivePropertyValueByConsumerNoAndPropertyName(billIdentifierDTO.getConsumerNo(), ConsumerMiscellaneousInformationInterface.PROPERTY_NAME_CONSUMER_PREFERRED_LANGUAGE);
+        if (languageMiscellaneous == null) languageMiscellaneous = "ENGLISH";
         billIdentifierDTO.setConsumerPreferredLanguage(languageMiscellaneous);
 
         //Preparing data for Bill template

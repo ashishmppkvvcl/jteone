@@ -1,14 +1,13 @@
 package com.mppkvvcl.jteone.dtos.templates.pdfbill;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 public class NetMeterReplacementDetail {
 
     private int index;
 
     private String meterDetail;
-    private LocalDate replacementDate;
+    private String replacementDate;
     private BigDecimal importPreviousRead;
     private BigDecimal importCurrentRead;
     private BigDecimal importConsumption;
@@ -33,11 +32,11 @@ public class NetMeterReplacementDetail {
         this.meterDetail = meterDetail;
     }
 
-    public LocalDate getReplacementDate() {
+    public String getReplacementDate() {
         return replacementDate;
     }
 
-    public void setReplacementDate(LocalDate replacementDate) {
+    public void setReplacementDate(String replacementDate) {
         this.replacementDate = replacementDate;
     }
 
@@ -97,19 +96,19 @@ public class NetMeterReplacementDetail {
         this.netConsumption = netConsumption;
     }
 
-    @Override
-    public String toString() {
-        return "NetMeterReplacementDetail{" +
-                "index=" + index +
-                ", meterDetail='" + meterDetail + '\'' +
-                ", replacementDate=" + replacementDate +
-                ", importPreviousRead=" + importPreviousRead +
-                ", importCurrentRead=" + importCurrentRead +
-                ", importConsumption=" + importConsumption +
-                ", exportPreviousRead=" + exportPreviousRead +
-                ", exportCurrentRead=" + exportCurrentRead +
-                ", exportConsumption=" + exportConsumption +
-                ", netConsumption=" + netConsumption +
-                '}';
+    public NetMeterReplacementDetail() {
+    }
+
+    public NetMeterReplacementDetail(int index, String meterDetail, String replacementDate, BigDecimal importPreviousRead, BigDecimal importCurrentRead, BigDecimal importConsumption, BigDecimal exportPreviousRead, BigDecimal exportCurrentRead, BigDecimal exportConsumption, BigDecimal netConsumption) {
+        this.index = index;
+        this.meterDetail = meterDetail;
+        this.replacementDate = replacementDate;
+        this.importPreviousRead = importPreviousRead;
+        this.importCurrentRead = importCurrentRead;
+        this.importConsumption = importConsumption;
+        this.exportPreviousRead = exportPreviousRead;
+        this.exportCurrentRead = exportCurrentRead;
+        this.exportConsumption = exportConsumption;
+        this.netConsumption = netConsumption;
     }
 }

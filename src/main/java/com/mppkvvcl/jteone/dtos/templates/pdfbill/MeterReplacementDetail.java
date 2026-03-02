@@ -1,14 +1,13 @@
 package com.mppkvvcl.jteone.dtos.templates.pdfbill;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 public class MeterReplacementDetail {
 
     private int index;
 
     private String meterDetail;
-    private LocalDate replacementDate;
+    private String replacementDate;
     private BigDecimal previousRead;
     private BigDecimal currentRead;
     private BigDecimal consumption;
@@ -30,11 +29,11 @@ public class MeterReplacementDetail {
         this.meterDetail = meterDetail;
     }
 
-    public LocalDate getReplacementDate() {
+    public String getReplacementDate() {
         return replacementDate;
     }
 
-    public void setReplacementDate(LocalDate replacementDate) {
+    public void setReplacementDate(String replacementDate) {
         this.replacementDate = replacementDate;
     }
 
@@ -70,16 +69,16 @@ public class MeterReplacementDetail {
         this.proratedCurrentBill = proratedCurrentBill;
     }
 
-    @Override
-    public String toString() {
-        return "MeterReplacementDetail{" +
-                "index=" + index +
-                ", meterDetail='" + meterDetail + '\'' +
-                ", replacementDate=" + replacementDate +
-                ", previousRead=" + previousRead +
-                ", currentRead=" + currentRead +
-                ", consumption=" + consumption +
-                ", proratedCurrentBill=" + proratedCurrentBill +
-                '}';
+    public MeterReplacementDetail() {
+    }
+
+    public MeterReplacementDetail(int index, String meterDetail, String replacementDate, BigDecimal previousRead, BigDecimal currentRead, BigDecimal consumption, BigDecimal proratedCurrentBill) {
+        this.index = index;
+        this.meterDetail = meterDetail;
+        this.replacementDate = replacementDate;
+        this.previousRead = previousRead;
+        this.currentRead = currentRead;
+        this.consumption = consumption;
+        this.proratedCurrentBill = proratedCurrentBill;
     }
 }

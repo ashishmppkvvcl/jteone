@@ -1,14 +1,13 @@
 package com.mppkvvcl.jteone.dtos.templates.pdfbill;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 public class ReadHistoryInformation {
 
     private int index;
 
     private String billMonth;
-    private LocalDate readDate;
+    private String readDate;
     private BigDecimal reading;
     private BigDecimal unit;
 
@@ -36,11 +35,11 @@ public class ReadHistoryInformation {
         this.reading = reading;
     }
 
-    public LocalDate getReadDate() {
+    public String getReadDate() {
         return readDate;
     }
 
-    public void setReadDate(LocalDate readDate) {
+    public void setReadDate(String readDate) {
         this.readDate = readDate;
     }
 
@@ -55,7 +54,7 @@ public class ReadHistoryInformation {
     public ReadHistoryInformation() {
     }
 
-    public ReadHistoryInformation(int index, String billMonth, LocalDate readDate, BigDecimal reading, BigDecimal unit) {
+    public ReadHistoryInformation(int index, String billMonth, String readDate, BigDecimal reading, BigDecimal unit) {
         this.index = index;
         this.billMonth = billMonth;
         this.readDate = readDate;

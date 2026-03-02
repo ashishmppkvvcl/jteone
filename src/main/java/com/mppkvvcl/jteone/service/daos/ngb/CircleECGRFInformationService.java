@@ -13,8 +13,9 @@ public class CircleECGRFInformationService {
     @Autowired
     private CircleECGRFInformationDAO circleECGRFInformationDAO;
 
-    public List<CircleECGRFInformationInterface> getByCircleIdOrderByIndexAsc(long circleId) {
+    public List<CircleECGRFInformationInterface> getByCircleIdAndMonthOrderByIndexAsc(long circleId, String billMonth) {
+        if (billMonth == null) return null;
 
-        return circleECGRFInformationDAO.getByCircleIdOrderByIndexAsc(circleId);
+        return circleECGRFInformationDAO.getByCircleIdAndMonthOrderByIndexAsc(circleId, billMonth);
     }
 }

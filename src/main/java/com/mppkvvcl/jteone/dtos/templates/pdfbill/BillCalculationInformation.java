@@ -1,16 +1,14 @@
 package com.mppkvvcl.jteone.dtos.templates.pdfbill;
 
-import java.math.BigDecimal;
-
 public class BillCalculationInformation {
 
     private int index;
 
     private String head;
     private String slab;
-    private BigDecimal rate;
-    private BigDecimal unit;
-    private BigDecimal amount;
+    private String rate;
+    private String unit;
+    private String amount;
 
     public int getIndex() {
         return index;
@@ -36,39 +34,39 @@ public class BillCalculationInformation {
         this.slab = slab;
     }
 
-    public BigDecimal getRate() {
+    public String getRate() {
         return rate;
     }
 
-    public void setRate(BigDecimal rate) {
+    public void setRate(String rate) {
         this.rate = rate;
     }
 
-    public BigDecimal getUnit() {
+    public String getUnit() {
         return unit;
     }
 
-    public void setUnit(BigDecimal unit) {
+    public void setUnit(String unit) {
         this.unit = unit;
     }
 
-    public BigDecimal getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 
-    @Override
-    public String toString() {
-        return "BillCalculationInformation{" +
-                "index=" + index +
-                ", head='" + head + '\'' +
-                ", slab='" + slab + '\'' +
-                ", rate=" + rate +
-                ", unit=" + unit +
-                ", amount=" + amount +
-                '}';
+    public BillCalculationInformation() {
+    }
+
+    public BillCalculationInformation(int index, String head, String slab, String rate, String unit, String amount) {
+        this.index = index;
+        this.head = head;
+        this.slab = slab;
+        this.rate = rate;
+        this.unit = unit;
+        this.amount = amount;
     }
 }
