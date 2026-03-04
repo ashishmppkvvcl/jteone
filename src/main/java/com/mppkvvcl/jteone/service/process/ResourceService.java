@@ -22,7 +22,14 @@ public class ResourceService {
 
     public static final String IMAGE_TYPE_LOGO = "logo";
     public static final String IMAGE_TYPE_QR = "qr";
+    public static final String IMAGE_TYPE_ADVERTISEMENT = "advertisement";
+    public static final String IMAGE_TYPE_BILL_ADVERTISEMENT = "advertisement/bill";
     public static final String IMAGE_EXTENSION_PNG = "png";
+    public static final String IMAGE_EXTENSION_SVG = "svg";
+    public static final String IMAGE_EXTENSION_JPEG = "jpeg";
+    public static final String PNG_HTML_BASE54_PREFIX = "data:image/png;base64,";
+    public static final String SVG_HTML_BASE54_PREFIX = "data:image/svg+xml;base64,";
+    public static final String JPEG_HTML_BASE54_PREFIX = "data:image/jpeg;base64,,";
 
     @Value("classpath:images")
     private String imagePrefix;
@@ -68,6 +75,8 @@ public class ResourceService {
     }
 
     public String convertPngToBase64(URL url) {
+        if (url == null) return null;
+
         byte[] imageBytes = null;
         try {
             final Path path = Paths.get(url.toURI());

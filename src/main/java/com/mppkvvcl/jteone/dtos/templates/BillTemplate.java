@@ -25,6 +25,7 @@ public class BillTemplate implements JteTemplateInterface {
     private List<VigilanceInformation> vigilanceInformationList;
     private List<AdjustmentInformation> adjustmentInformationList;
     private List<ECGRFInformation> ecgrfInformationList;
+    private AdvertisementInformation advertisementInformation;
 
     public TemplateInformation getTemplateInformation() {
         return templateInformation;
@@ -285,6 +286,14 @@ public class BillTemplate implements JteTemplateInterface {
         this.ecgrfInformationList = ecgrfInformationList;
     }
 
+    public AdvertisementInformation getAdvertisementInformation() {
+        return advertisementInformation;
+    }
+
+    public void setAdvertisementInformation(AdvertisementInformation advertisementInformation) {
+        this.advertisementInformation = advertisementInformation;
+    }
+
     @Override
     public String toString() {
         return "BillTemplate{" +
@@ -306,6 +315,7 @@ public class BillTemplate implements JteTemplateInterface {
                 ", vigilanceInformationList=" + vigilanceInformationList +
                 ", adjustmentInformationList=" + adjustmentInformationList +
                 ", ecgrfInformationList=" + ecgrfInformationList +
+                ", advertisementInformation=" + advertisementInformation +
                 '}';
     }
 }

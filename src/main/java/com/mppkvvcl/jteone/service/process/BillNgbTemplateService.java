@@ -1,10 +1,5 @@
 package com.mppkvvcl.jteone.service.process;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
 import com.mppkvvcl.jteone.dtos.response.MessageDTO;
 import com.mppkvvcl.jteone.dtos.templates.BillTemplate;
 import com.mppkvvcl.jteone.dtos.templates.pdfbill.*;
@@ -26,8 +21,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
@@ -127,10 +120,19 @@ public class BillNgbTemplateService {
     private ReadMasterExportTODService readMasterExportTODService;
 
     @Autowired
+    private ResourceService resourceService;
+
+    @Autowired
     private SecurityDepositService securityDepositService;
 
     @Autowired
     private UserDetailService userDetailService;
+
+    @Autowired
+    private QRService qrService;
+
+    @Autowired
+    private XChartService xChartService;
 
     @Autowired
     private ZoneService zoneService;
@@ -159,6 +161,8 @@ public class BillNgbTemplateService {
 
         setReadAndPaymentHistoryAndAverageDetail(templateData);
         setBillCalculationAndAdjustmentInformation(templateData, billId);
+
+        setAdvertisement(templateData);
 
         return templateData;
     }
@@ -237,7 +241,7 @@ public class BillNgbTemplateService {
         final BigDecimal payableAfterDueDate = GlobalUtility.add(payableBeforeDueDate, bill.getCurrentBillSurcharge());
         if (LocalDate.now().isAfter(bill.getDueDate())) payableAmount = payableAfterDueDate;
 
-        final BillSummary billSummary = new BillSummary(String.valueOf(bill.getId()), bill.getBillMonth(), payableAmount, payableBeforeDueDate, payableAfterDueDate, bill.getCurrentBill(), bill.getArrear().add(bill.getSurchargeDemanded()), null, null,
+        final BillSummary billSummary = new BillSummary(String.valueOf(bill.getId()), bill.getBillMonth(), payableAmount, payableBeforeDueDate, payableAfterDueDate, bill.getCurrentBill(), bill.getArrear().add(bill.getSurchargeDemanded()), null, null, null,
                 GlobalUtility.getDateInStringFromDate(bill.getDueDate(), GlobalUtility.EXPORT_DATE_FORMAT), GlobalUtility.getDateInStringFromDate(bill.getChequeDueDate(), GlobalUtility.EXPORT_DATE_FORMAT), bill.getBilledUnit(), null, null,
                 GlobalUtility.getDateInStringFromDate(bill.getBillDate(), GlobalUtility.EXPORT_DATE_FORMAT), billType, billBasis, null, null, sdHeld, bill.getAsdArrear(), pdcDate);
 
@@ -277,17 +281,8 @@ public class BillNgbTemplateService {
 
         if (StringUtils.isNotEmpty(link)) {
             templateData.getBillSummary().setPaymentQuickResponseString(link);
-
-            try {
-                final String data = UrjasCypher.getEncryptedPublicURL(link);
-                final BitMatrix matrix = new MultiFormatWriter().encode(data, BarcodeFormat.QR_CODE, 200, 200);
-                final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                MatrixToImageWriter.writeToStream(matrix, "png", bos);
-                String paymentQRAsBase64 = Base64.getEncoder().encodeToString(bos.toByteArray());
-                templateData.getBillSummary().setPaymentQuickResponseBase64(paymentQRAsBase64);
-            } catch (WriterException | IOException e) {
-                log.error("Error occurred while generating payment QR for {}", link);
-            }
+            final String data = UrjasCypher.getEncryptedPublicURL(link);
+            templateData.getBillSummary().setPaymentQuickResponseBase64(qrService.getAsBase64Image(data, 200, 200));
         }
     }
 
@@ -301,6 +296,9 @@ public class BillNgbTemplateService {
         if (ConsumerConnectionInformationInterface.METERING_STATUS_METERED.equals(templateData.getConnectionInformation().getMeteringStatus())) {
             final List<ReadMasterInterface> readMasterList = readMasterService.getByConsumerNoAndReplacementFlagAndUsedOnBillAndBillMonthLessThanOrderByBillMonthDESC(consumerNo, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, ReadMasterInterface.USED_ON_BILL, billMonth, 6);
             if (!GlobalUtility.isEmpty(readMasterList)) {
+                final List xAxisLabels = new ArrayList();
+                final List<BigDecimal> barChartCurrentYearReadList = new ArrayList<>();
+
                 int maxIndex = readMasterList.size() - 1;
                 final List<ReadHistoryInformation> readHistoryInformationList = new ArrayList<>();
                 if (maxIndex >= 0) {
@@ -308,6 +306,8 @@ public class BillNgbTemplateService {
                     if (readMaster != null) {
                         final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(1, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
+                        xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
                     }
                 }
                 if (maxIndex >= 1) {
@@ -315,6 +315,9 @@ public class BillNgbTemplateService {
                     if (readMaster != null) {
                         final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(2, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
+                        xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
                     }
                 }
                 if (maxIndex >= 2) {
@@ -322,6 +325,8 @@ public class BillNgbTemplateService {
                     if (readMaster != null) {
                         final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(3, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
+                        xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
                     }
                 }
                 if (maxIndex >= 3) {
@@ -329,6 +334,8 @@ public class BillNgbTemplateService {
                     if (readMaster != null) {
                         final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(4, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
+                        xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
                     }
                 }
                 if (maxIndex >= 4) {
@@ -336,15 +343,19 @@ public class BillNgbTemplateService {
                     if (readMaster != null) {
                         final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(5, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
+                        xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
                     }
                 }
-                /*if (maxIndex >= 5) {
+                if (maxIndex >= 5) {
                     ReadMasterInterface readMaster = readMasterList.get(5);
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(6, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
-                        readHistoryInformationList.add(readHistoryInformation);
+                        //final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(6, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
+                        //readHistoryInformationList.add(readHistoryInformation);
+                        xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
                     }
-                }*/
+                }
                 //Last year's same month reading
                 final int year = Integer.valueOf(billMonth.substring(4));
                 final String lastYearMonth = billMonth.substring(0, 4).concat(String.valueOf(year - 1));
@@ -356,6 +367,23 @@ public class BillNgbTemplateService {
                         final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(6, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
                     }
+                }
+
+                if (!GlobalUtility.isEmpty(xAxisLabels) && !GlobalUtility.isEmpty(barChartCurrentYearReadList)) {
+                    final Map<String, List<BigDecimal>> barChartData = new HashMap<>();
+                    barChartData.put("This Year", barChartCurrentYearReadList);
+
+                    final List<ReadMasterInterface> lastYearReadMasterList = readMasterService.getByConsumerNoAndReplacementFlagAndUsedOnBillAndBillMonthLessThanOrderByBillMonthDESC(consumerNo, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, ReadMasterInterface.USED_ON_BILL, lastYearMonth, 6);
+                    if (!GlobalUtility.isEmpty(lastYearReadMasterList)) {
+                        final List<BigDecimal> barChartLastYearReadList = new ArrayList<>();
+                        for (ReadMasterInterface readMaster : lastYearReadMasterList)
+                            barChartLastYearReadList.add(readMaster.getTotalConsumption());
+
+                        if (barChartCurrentYearReadList.size() == barChartLastYearReadList.size())
+                            barChartData.put("Last Year", barChartLastYearReadList);
+                    }
+
+                    templateData.getBillSummary().setConsumptionTrendBarChartBase64(xChartService.getBarChartBase64Image(xAxisLabels, barChartData, 1000, 190));
                 }
 
                 templateData.setReadHistoryInformationList(readHistoryInformationList);
@@ -727,10 +755,10 @@ public class BillNgbTemplateService {
             }
 
             //Generator Read Detail
-            final List<ReadMasterGeneratorInterface> readMasterGeneratorList = readMasterGeneratorService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(consumerNo, billMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, true, sort);
+            final List<ReadMasterGeneratorInterface> readMasterGeneratorList = readMasterGeneratorService.getByConsumerNoAndBillMonthAndReplacementFlag(consumerNo, billMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, sort);
             if (!GlobalUtility.isEmpty(readMasterGeneratorList) && readMasterGeneratorList.size() == 1) {
                 BigDecimal readMasterGeneratorPreviousRead = null;
-                final List<ReadMasterGeneratorInterface> previousReadMasterGeneratorList = readMasterGeneratorService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(consumerNo, previousBillMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, true, sort);
+                final List<ReadMasterGeneratorInterface> previousReadMasterGeneratorList = readMasterGeneratorService.getByConsumerNoAndBillMonthAndReplacementFlag(consumerNo, previousBillMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, sort);
                 if (!GlobalUtility.isEmpty(previousReadMasterGeneratorList) && previousReadMasterGeneratorList.size() == 1) {
                     readMasterGeneratorPreviousRead = previousReadMasterGeneratorList.getFirst().getReading();
                 }
@@ -825,15 +853,6 @@ public class BillNgbTemplateService {
         final BillTODInterface billTOD = billTODService.getByBillId(billId);
         if (readMasterTOD != null && billTOD != null) {
             final TODInformation todInformation = new TODInformation();
-            todInformation.setTotalUnit(GlobalUtility.add(readMasterTOD.getTod1TotalConsumption(), readMasterTOD.getTod2TotalConsumption(), readMasterTOD.getTod3TotalConsumption(), readMasterTOD.getTod4TotalConsumption()));
-            todInformation.setTotalUnit(GlobalUtility.add(billTOD.getTod1(), billTOD.getTod2(), billTOD.getTod3(), billTOD.getTod4()));
-            final List<TODDetail> todDetailList = new ArrayList<>();
-            todDetailList.add(new TODDetail(0, ReadMasterTODInterface.TOD1, "Peak", "10 PM to 6 AM", readMasterTOD.getTod1TotalConsumption(), billTOD.getTod1()));
-            todDetailList.add(new TODDetail(1, ReadMasterTODInterface.TOD2, "Peak", "6 AM to 9 AM", readMasterTOD.getTod2TotalConsumption(), billTOD.getTod2()));
-            todDetailList.add(new TODDetail(2, ReadMasterTODInterface.TOD3, "Off Peak", "9 AM to 5 PM", readMasterTOD.getTod3TotalConsumption(), billTOD.getTod3()));
-            todDetailList.add(new TODDetail(3, ReadMasterTODInterface.TOD4, "Peak", "5 PM to  10 PM", readMasterTOD.getTod4TotalConsumption(), billTOD.getTod4()));
-            todInformation.setTodDetailList(todDetailList);
-
             if (isNetMeter) {
                 long previousReadMasterId = 0L;
                 final Sort sort = GlobalUtility.getSortObject(SortOrder.DESC);
@@ -856,6 +875,20 @@ public class BillNgbTemplateService {
                         readMasterTOD.getTod4Consumption(), readMasterTOD.getTod4Assessment(), readMasterTOD.getTod4TotalConsumption(), null, billTOD.getTod4()));
 
                 todInformation.setTodNetMeterDetailList(todNetMeterDetailList);
+            } else {
+                todInformation.setTotalUnit(GlobalUtility.add(readMasterTOD.getTod1TotalConsumption(), readMasterTOD.getTod2TotalConsumption(), readMasterTOD.getTod3TotalConsumption(), readMasterTOD.getTod4TotalConsumption()));
+                todInformation.setTotalAmount(GlobalUtility.add(billTOD.getTod1(), billTOD.getTod2(), billTOD.getTod3(), billTOD.getTod4()));
+                final List<TODDetail> todDetailList = new ArrayList<>();
+                todDetailList.add(new TODDetail(0, ReadMasterTODInterface.TOD1, "Peak", "10 PM to 6 AM", readMasterTOD.getTod1TotalConsumption(), billTOD.getTod1()));
+                todDetailList.add(new TODDetail(1, ReadMasterTODInterface.TOD2, "Peak", "6 AM to 9 AM", readMasterTOD.getTod2TotalConsumption(), billTOD.getTod2()));
+                todDetailList.add(new TODDetail(2, ReadMasterTODInterface.TOD3, "Off Peak", "9 AM to 5 PM", readMasterTOD.getTod3TotalConsumption(), billTOD.getTod3()));
+                todDetailList.add(new TODDetail(3, ReadMasterTODInterface.TOD4, "Peak", "5 PM to  10 PM", readMasterTOD.getTod4TotalConsumption(), billTOD.getTod4()));
+
+                final Map<String, BigDecimal> pieChartMap = Map.of(ReadMasterTODInterface.TOD1, readMasterTOD.getTod1TotalConsumption(), ReadMasterTODInterface.TOD2, readMasterTOD.getTod2TotalConsumption(),
+                        ReadMasterTODInterface.TOD3, readMasterTOD.getTod3TotalConsumption(), ReadMasterTODInterface.TOD4, readMasterTOD.getTod4TotalConsumption());
+                todInformation.setTodPieChartBase64Image(xChartService.getPieChartBase64Image(pieChartMap, 450, 220));
+
+                todInformation.setTodDetailList(todDetailList);
             }
         }
     }
@@ -925,5 +958,19 @@ public class BillNgbTemplateService {
         }
 
         templateData.setMeterReplacementInformation(meterReplacementInformation);
+    }
+
+    //Setting Meter Replacement Information
+    private void setAdvertisement(final BillTemplate templateData) {
+        if (templateData == null) return;
+        final AdvertisementInformation advertisementInformation = new AdvertisementInformation();
+
+        String pageOneZeroAdBase64 = resourceService.convertPngToBase64(resourceService.getImage("zero.jpeg", ResourceService.IMAGE_TYPE_BILL_ADVERTISEMENT));
+        if (StringUtils.isNotEmpty(pageOneZeroAdBase64)) {
+            pageOneZeroAdBase64 = ResourceService.JPEG_HTML_BASE54_PREFIX + pageOneZeroAdBase64;
+            advertisementInformation.setPageOneZeroBase64Image(pageOneZeroAdBase64);
+        }
+
+        templateData.setAdvertisementInformation(advertisementInformation);
     }
 }

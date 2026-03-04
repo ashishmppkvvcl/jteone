@@ -14,6 +14,7 @@ public class BillSummary {
 
     private String paymentQuickResponseString;
     private String paymentQuickResponseBase64;
+    private String consumptionTrendBarChartBase64;
 
     private String dueDate;
     private String chequeDueDate;
@@ -100,6 +101,14 @@ public class BillSummary {
 
     public void setPaymentQuickResponseBase64(String paymentQuickResponseBase64) {
         this.paymentQuickResponseBase64 = paymentQuickResponseBase64;
+    }
+
+    public String getConsumptionTrendBarChartBase64() {
+        return consumptionTrendBarChartBase64;
+    }
+
+    public void setConsumptionTrendBarChartBase64(String consumptionTrendBarChartBase64) {
+        this.consumptionTrendBarChartBase64 = consumptionTrendBarChartBase64;
     }
 
     public String getDueDate() {
@@ -209,7 +218,7 @@ public class BillSummary {
     public BillSummary() {
     }
 
-    public BillSummary(String billNo, String billMonth, BigDecimal payableAmount, BigDecimal payableTillDueDate, BigDecimal payableAfterDueDate, BigDecimal currentBill, BigDecimal arrear, String paymentQuickResponseString, String paymentQuickResponseBase64, String dueDate, String chequeDueDate, BigDecimal consumption, String meterReaderName, String meterReaderContactNo, String billDate, String billType, String billBasis, BigDecimal dailyAverageConsumption, BigDecimal dailyAverageBill, BigDecimal sdHeld, BigDecimal sdPending, String pdcDate) {
+    public BillSummary(String billNo, String billMonth, BigDecimal payableAmount, BigDecimal payableTillDueDate, BigDecimal payableAfterDueDate, BigDecimal currentBill, BigDecimal arrear, String paymentQuickResponseString, String paymentQuickResponseBase64, String consumptionTrendBarChartBase64, String dueDate, String chequeDueDate, BigDecimal consumption, String meterReaderName, String meterReaderContactNo, String billDate, String billType, String billBasis, BigDecimal dailyAverageConsumption, BigDecimal dailyAverageBill, BigDecimal sdHeld, BigDecimal sdPending, String pdcDate) {
         this.billNo = billNo;
         this.billMonth = billMonth;
         this.payableAmount = payableAmount;
@@ -219,6 +228,7 @@ public class BillSummary {
         this.arrear = arrear;
         this.paymentQuickResponseString = paymentQuickResponseString;
         this.paymentQuickResponseBase64 = paymentQuickResponseBase64;
+        this.consumptionTrendBarChartBase64 = consumptionTrendBarChartBase64;
         this.dueDate = dueDate;
         this.chequeDueDate = chequeDueDate;
         this.consumption = consumption;

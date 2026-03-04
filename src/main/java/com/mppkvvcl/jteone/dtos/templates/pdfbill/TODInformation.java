@@ -8,6 +8,7 @@ public class TODInformation {
     private List<TODDetail> todDetailList;
     private BigDecimal totalUnit;
     private BigDecimal totalAmount;
+    private String todPieChartBase64Image;
 
     private List<TODNetMeterDetail> todNetMeterDetailList;
 
@@ -35,21 +36,19 @@ public class TODInformation {
         this.totalAmount = totalAmount;
     }
 
+    public String getTodPieChartBase64Image() {
+        return todPieChartBase64Image;
+    }
+
+    public void setTodPieChartBase64Image(String todPieChartBase64Image) {
+        this.todPieChartBase64Image = todPieChartBase64Image;
+    }
+
     public List<TODNetMeterDetail> getTodNetMeterDetailList() {
         return todNetMeterDetailList;
     }
 
     public void setTodNetMeterDetailList(List<TODNetMeterDetail> todNetMeterDetailList) {
         this.todNetMeterDetailList = todNetMeterDetailList;
-    }
-
-    @Override
-    public String toString() {
-        return "TODInformation{" +
-                "todDetailList=" + todDetailList +
-                ", totalUnit=" + totalUnit +
-                ", totalAmount=" + totalAmount +
-                ", todNetMeterDetailList=" + todNetMeterDetailList +
-                '}';
     }
 }

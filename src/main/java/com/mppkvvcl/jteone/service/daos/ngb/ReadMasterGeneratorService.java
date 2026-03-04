@@ -15,10 +15,10 @@ public class ReadMasterGeneratorService {
     @Autowired
     private ReadMasterGeneratorDAO readMasterGeneratorDAO;
 
-    public List<ReadMasterGeneratorInterface> getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(String consumerNo, String billMonth, String replacementFlag, boolean usedOnBill, Sort sort) {
+    public List<ReadMasterGeneratorInterface> getByConsumerNoAndBillMonthAndReplacementFlag(String consumerNo, String billMonth, String replacementFlag, Sort sort) {
         if (StringUtils.isEmpty(consumerNo) || StringUtils.isEmpty(billMonth) || StringUtils.isEmpty(replacementFlag) || sort == null)
             return null;
 
-        return readMasterGeneratorDAO.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(consumerNo, billMonth, replacementFlag, usedOnBill, sort);
+        return readMasterGeneratorDAO.getByConsumerNoAndBillMonthAndReplacementFlag(consumerNo, billMonth, replacementFlag, sort);
     }
 }

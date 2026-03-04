@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class HtmlToPdfWkOpenService {
@@ -24,10 +23,8 @@ public class HtmlToPdfWkOpenService {
         if (htmlContent == null) return null;
 
         byte[] out = null;
-        final RestTemplate restTemplate = httpConfiguration.getRestTemplate();
         try {
-            out = httpConfiguration.getRestTemplate()
-                    .postForObject(apiUrl, htmlContent, byte[].class);
+            out = httpConfiguration.getRestTemplate().postForObject(apiUrl, htmlContent, byte[].class);
         } catch (Exception exception) {
             log.error("Exception occurred while calling WK Html to Pdf Conversion API", exception);
         }

@@ -1,6 +1,7 @@
 package com.mppkvvcl.jteone.service.daos.mis;
 
 import com.mppkvvcl.jteone.service.process.ResourceService;
+import com.mppkvvcl.jteone.utility.GlobalConstant;
 import com.mppkvvcl.jteone.utility.GlobalUtility;
 import com.mppkvvcl.misdao.daos.DiscomDAO;
 import com.mppkvvcl.misdao.interfaces.DiscomInterface;
@@ -21,6 +22,8 @@ public class DiscomService {
     private static String discomLogoAsBase64;
     private static String mpstateLogoAsBase64;
     private static String whatsappQRAsBase64;
+    private static String imageExtension;
+    private static String imageHtmlPrefix;
 
     @Autowired
     @Qualifier("misDiscomDAO")
@@ -48,8 +51,12 @@ public class DiscomService {
 
         final DiscomInterface discom = get();
         if (discom == null) return null;
+        if (imageExtension == null)
+            imageExtension = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.IMAGE_EXTENSION_SVG : ResourceService.IMAGE_EXTENSION_PNG;
+        if (imageHtmlPrefix == null)
+            imageHtmlPrefix = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.SVG_HTML_BASE54_PREFIX : ResourceService.PNG_HTML_BASE54_PREFIX;
 
-        discomLogoAsBase64 = resourceService.convertPngToBase64(resourceService.getImage(discom.getShortName().toLowerCase() + "." + ResourceService.IMAGE_EXTENSION_PNG, ResourceService.IMAGE_TYPE_LOGO));
+        discomLogoAsBase64 = imageHtmlPrefix + resourceService.convertPngToBase64(resourceService.getImage(discom.getShortName().toLowerCase() + "." + imageExtension, ResourceService.IMAGE_TYPE_LOGO));
         return discomLogoAsBase64;
     }
 
@@ -58,8 +65,12 @@ public class DiscomService {
 
         final DiscomInterface discom = get();
         if (discom == null) return null;
+        if (imageExtension == null)
+            imageExtension = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.IMAGE_EXTENSION_SVG : ResourceService.IMAGE_EXTENSION_PNG;
+        if (imageHtmlPrefix == null)
+            imageHtmlPrefix = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.SVG_HTML_BASE54_PREFIX : ResourceService.PNG_HTML_BASE54_PREFIX;
 
-        mpstateLogoAsBase64 = resourceService.convertPngToBase64(resourceService.getImage("state_mp." + ResourceService.IMAGE_EXTENSION_PNG, ResourceService.IMAGE_TYPE_LOGO));
+        mpstateLogoAsBase64 = imageHtmlPrefix + resourceService.convertPngToBase64(resourceService.getImage("state_mp." + imageExtension, ResourceService.IMAGE_TYPE_LOGO));
         return mpstateLogoAsBase64;
     }
 
@@ -68,8 +79,12 @@ public class DiscomService {
 
         final DiscomInterface discom = get();
         if (discom == null) return null;
+        if (imageExtension == null)
+            imageExtension = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.IMAGE_EXTENSION_SVG : ResourceService.IMAGE_EXTENSION_PNG;
+        if (imageHtmlPrefix == null)
+            imageHtmlPrefix = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.SVG_HTML_BASE54_PREFIX : ResourceService.PNG_HTML_BASE54_PREFIX;
 
-        whatsappQRAsBase64 = resourceService.convertPngToBase64(resourceService.getImage("whatsapp_" + discom.getShortName().toLowerCase() + "." + ResourceService.IMAGE_EXTENSION_PNG, ResourceService.IMAGE_TYPE_QR));
+        whatsappQRAsBase64 = imageHtmlPrefix + resourceService.convertPngToBase64(resourceService.getImage("whatsapp_" + discom.getShortName().toLowerCase() + "." + imageExtension, ResourceService.IMAGE_TYPE_QR));
         return whatsappQRAsBase64;
     }
 }
