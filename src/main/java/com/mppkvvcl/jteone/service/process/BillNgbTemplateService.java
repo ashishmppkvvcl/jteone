@@ -150,9 +150,8 @@ public class BillNgbTemplateService {
         setTemplateInformation(templateData, templateVersion);
         setCompanyInformation(templateData);
 
-        setPaymentQRInformation(templateData);
-
         final DivisionInterface division = setConsumerAndConnectionInformation(templateData, consumerNo);
+        setPaymentQRInformation(templateData);
         setContactInformation(templateData, division.getId());
         setBillMessage(templateData, consumerPreferredLanguage);
         setCircleECGRFInformation(templateData, division.getCircleId());
@@ -201,7 +200,8 @@ public class BillNgbTemplateService {
         //121 RC/DC Management Changes
         if (unpostedPayment > 340L) {
             rcdcAmount = ngbAdjustmentService.getAmountByConsumerNoAndCodeAndApprovalStatusAndPostedAndDeleted(consumerNo, AdjustmentInterface.ADJUSTMENT_CODE_SMART_METER_RC_DC_CHARGE, GlobalConstant.APPROVED, false, false);
-            if (rcdcAmount != null && rcdcAmount.compareTo(BigDecimal.ZERO) > 0) {
+            if (rcdcAmount == null) rcdcAmount = BigDecimal.ZERO;
+            if (rcdcAmount.compareTo(BigDecimal.ZERO) > 0) {
                 unpostedPayment = unpostedPayment - rcdcAmount.longValue();
             }
         }
@@ -237,9 +237,15 @@ public class BillNgbTemplateService {
         final BigDecimal deduction = new BigDecimal(unpostedPayment);
         BigDecimal payableAmount = GlobalUtility.subtract(bill.getNetBill(), deduction);
         payableAmount = GlobalUtility.add(payableAmount, totalPanchanamaBillAmount).setScale(2, RoundingMode.HALF_UP);
-        final BigDecimal payableBeforeDueDate = payableAmount;
-        final BigDecimal payableAfterDueDate = GlobalUtility.add(payableBeforeDueDate, bill.getCurrentBillSurcharge());
-        if (LocalDate.now().isAfter(bill.getDueDate())) payableAmount = payableAfterDueDate;
+        BigDecimal payableTotalingAmount = payableAmount;
+        BigDecimal payableBeforeDueDate = payableAmount;
+        BigDecimal payableAfterDueDate = payableAmount;
+        if (LocalDate.now().isAfter(bill.getDueDate()) && payableAmount.compareTo(BigDecimal.ZERO) > 0) {
+            payableAmount = payableAfterDueDate = GlobalUtility.add(payableBeforeDueDate, bill.getCurrentBillSurcharge());
+        }
+        if (payableAmount.compareTo(BigDecimal.ZERO) < 0) {
+            payableAmount = payableBeforeDueDate = payableAfterDueDate = BigDecimal.ZERO;
+        }
 
         final BillSummary billSummary = new BillSummary(String.valueOf(bill.getId()), bill.getBillMonth(), payableAmount, payableBeforeDueDate, payableAfterDueDate, bill.getCurrentBill(), bill.getArrear().add(bill.getSurchargeDemanded()), null, null, null,
                 GlobalUtility.getDateInStringFromDate(bill.getDueDate(), GlobalUtility.EXPORT_DATE_FORMAT), GlobalUtility.getDateInStringFromDate(bill.getChequeDueDate(), GlobalUtility.EXPORT_DATE_FORMAT), bill.getBilledUnit(), null, null,
@@ -250,12 +256,12 @@ public class BillNgbTemplateService {
         final BigDecimal penalCharge = GlobalUtility.add(bill.getAdditionalFixedCharges1(), bill.getAdditionalFixedCharges2());
         final BigDecimal subTotalThree = GlobalUtility.add(penalCharge, bill.getPfCharge(), bill.getAsdInstallment(), todSurchargeAndRebate, bill.getSdInterest(), bill.getLoadFactorIncentive(), bill.getLockCredit(), bill.getEmployeeRebate(), bill.getPrepaidMeterRebate(),
                 bill.getOnlinePaymentRebate(), bill.getPromptPaymentIncentive(), bill.getAdvancePaymentIncentive(), bill.getDemandSideIncentive(), wheelingCharges);
-        final BigDecimal subTotalFour = bill.getSubsidy();
+        final BigDecimal subTotalFour = bill.getCurrentBill();
         final BillInformation billInformation = new BillInformation(bill.getEnergyCharge(), bill.getFcaCharge(), bill.getFixedCharge(), subTotalOne, bill.getElectricityDuty(), bill.getCcbAdjustment(), subTotalTwo,
                 penalCharge, bill.getPfCharge(), bill.getAsdInstallment(), todSurchargeAndRebate, bill.getSdInterest(), bill.getLoadFactorIncentive(), bill.getLockCredit(), bill.getEmployeeRebate(), bill.getPrepaidMeterRebate(),
-                bill.getOnlinePaymentRebate(), bill.getPromptPaymentIncentive(), bill.getAdvancePaymentIncentive(), bill.getDemandSideIncentive(), wheelingCharges, subTotalThree,
+                bill.getOnlinePaymentRebate(), bill.getPromptPaymentIncentive(), bill.getAdvancePaymentIncentive(), bill.getDemandSideIncentive(), wheelingCharges == null ? BigDecimal.ZERO : wheelingCharges, subTotalThree,
                 bill.getSubsidy(), subTotalFour, bill.getArrear(), bill.getCumulativeSurcharge(), bill.getAsdArrear(), bill.getNetBill(), unpostedPayment, rcdcAmount,
-                vigilenceEnergyCharge, vigilenceSurcharge, payableAmount, bill.getBilledPF(), bill.getBilledMD(), bill.getPreviousRead(), bill.getMeteredUnit(), bill.getCurrentRead(), bill.getSurchargeDemanded());
+                vigilenceEnergyCharge, vigilenceSurcharge, payableTotalingAmount, bill.getBilledPF(), bill.getBilledMD(), bill.getPreviousRead(), bill.getMeteredUnit(), bill.getCurrentRead(), bill.getSurchargeDemanded());
 
         templateData.setBillSummary(billSummary);
         templateData.setBillInformation(billInformation);
@@ -281,8 +287,7 @@ public class BillNgbTemplateService {
 
         if (StringUtils.isNotEmpty(link)) {
             templateData.getBillSummary().setPaymentQuickResponseString(link);
-            final String data = UrjasCypher.getEncryptedPublicURL(link);
-            templateData.getBillSummary().setPaymentQuickResponseBase64(qrService.getAsBase64Image(data, 200, 200));
+            templateData.getBillSummary().setPaymentQuickResponseBase64(qrService.getAsBase64Image(link, 200, 200));
         }
     }
 
@@ -316,7 +321,6 @@ public class BillNgbTemplateService {
                         final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(2, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
                         xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
-                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
                         barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
                     }
                 }
@@ -383,7 +387,7 @@ public class BillNgbTemplateService {
                             barChartData.put("Last Year", barChartLastYearReadList);
                     }
 
-                    templateData.getBillSummary().setConsumptionTrendBarChartBase64(xChartService.getBarChartBase64Image(xAxisLabels, barChartData, 1000, 190));
+                    templateData.getBillSummary().setConsumptionTrendBarChartBase64(xChartService.getBarChartBase64Image(xAxisLabels, barChartData, 742, 140));
                 }
 
                 templateData.setReadHistoryInformationList(readHistoryInformationList);
@@ -453,7 +457,7 @@ public class BillNgbTemplateService {
         final List<BillCalculationLineInterface> billCalculationLineList = billCalculationLineService.getByBillId(billId);
         if (!GlobalUtility.isEmpty(billCalculationLineList)) {
             final List<BillCalculationInformation> billCalculationInformationList = new ArrayList<>();
-            for (int index = 0; index < billCalculationInformationList.size(); index++) {
+            for (int index = 0; index < billCalculationLineList.size(); index++) {
                 BillCalculationLineInterface billCalculationLine = billCalculationLineList.get(index);
                 final String slab = (StringUtils.isNotEmpty(billCalculationLine.getStartSlab())) ? billCalculationLine.getStartSlab() + " - " + billCalculationLine.getEndSlab() : "";
                 billCalculationInformationList.add(new BillCalculationInformation(index + 1, billCalculationLine.getHead(), slab, billCalculationLine.getRate(),
@@ -513,7 +517,7 @@ public class BillNgbTemplateService {
             employeeNo = employeeConnectionMapping.getEmployeeNo();
         }
         final ConsumerInformation consumerInformation = new ConsumerInformation((String) consumerInformationObj[0], (String) consumerInformationObj[1], (String) consumerInformationObj[3],
-                (String) consumerInformationObj[2], (String) consumerInformationObj[4], (String) consumerInformationObj[5], (String) consumerInformationObj[6], employeeNo, (String) consumerInformationObj[11]);
+                (String) consumerInformationObj[2], (String) consumerInformationObj[4], GlobalUtility.maskMobileNO((String) consumerInformationObj[5]), GlobalUtility.maskEmailId((String) consumerInformationObj[6]), GlobalUtility.genericMask(employeeNo), (String) consumerInformationObj[11]);
         templateData.setConsumerInformation(consumerInformation);
 
         final ZoneInterface zone = zoneService.getByCode(locationCode);
@@ -886,10 +890,11 @@ public class BillNgbTemplateService {
 
                 final Map<String, BigDecimal> pieChartMap = Map.of(ReadMasterTODInterface.TOD1, readMasterTOD.getTod1TotalConsumption(), ReadMasterTODInterface.TOD2, readMasterTOD.getTod2TotalConsumption(),
                         ReadMasterTODInterface.TOD3, readMasterTOD.getTod3TotalConsumption(), ReadMasterTODInterface.TOD4, readMasterTOD.getTod4TotalConsumption());
-                todInformation.setTodPieChartBase64Image(xChartService.getPieChartBase64Image(pieChartMap, 450, 220));
+                todInformation.setTodPieChartBase64Image(xChartService.getPieChartBase64Image(pieChartMap, 350, 172));
 
                 todInformation.setTodDetailList(todDetailList);
             }
+            templateData.setTodInformation(todInformation);
         }
     }
 

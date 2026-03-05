@@ -24,7 +24,7 @@ public class BillController {
 
     @GetMapping(value = "download/c/{consumerNo}/f/{fileFormat}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> downloadLatestBill(@PathVariable("consumerNo") String consumerNo, @PathVariable("fileFormat") String fileFormat) {
-
+        log.info("API Call /bill/download/c/{}/f/{}", consumerNo, fileFormat);
         final MessageDTO messageDTO = new MessageDTO();
         if (StringUtils.isEmpty(consumerNo) || StringUtils.isEmpty(fileFormat)) {
             messageDTO.setMessage("Input param(s) is null");
@@ -36,6 +36,7 @@ public class BillController {
             log.info(messageDTO.getMessage());
             return ResponseEntity.badRequest().body(messageDTO);
         }
+        if (consumerNo.startsWith("N")) consumerNo = consumerNo.substring(1);
 
         byte[] out = billServiceImpl.downloadLatestBill(consumerNo, fileFormat, messageDTO);
 
@@ -52,6 +53,7 @@ public class BillController {
 
     @GetMapping(value = "download/c/{consumerNo}/bm/{billMonth}/f/{fileFormat}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> downloadBill(@PathVariable("consumerNo") String consumerNo, @PathVariable("billMonth") String billMonth, @PathVariable("fileFormat") String fileFormat) {
+        log.info("API Call /bill/download/c/{}/bm/{}/f/{}", consumerNo, billMonth, fileFormat);
 
         final MessageDTO messageDTO = new MessageDTO();
         if (StringUtils.isEmpty(consumerNo) || StringUtils.isEmpty(billMonth) || StringUtils.isEmpty(fileFormat)) {
@@ -64,6 +66,7 @@ public class BillController {
             log.info(messageDTO.getMessage());
             return ResponseEntity.badRequest().body(messageDTO);
         }
+        if (consumerNo.startsWith("N")) consumerNo = consumerNo.substring(1);
 
         byte[] out = billServiceImpl.downloadBill(consumerNo, billMonth, fileFormat, messageDTO);
 

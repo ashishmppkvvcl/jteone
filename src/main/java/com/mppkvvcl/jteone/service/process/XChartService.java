@@ -31,7 +31,7 @@ public class XChartService {
                 .theme(Styler.ChartTheme.Matlab).build();
 
         final CategoryStyler styler = chart.getStyler();
-        styler.setSeriesColors(new Color[]{Color.BLUE, Color.LIGHT_GRAY});//Color Option
+        styler.setSeriesColors(new Color[]{new Color(235, 122, 82), new Color(255, 231, 146)});//Color Option
         styler.setPlotGridVerticalLinesVisible(false);
         styler.setOverlapped(false);
         styler.setAvailableSpaceFill(.8);
@@ -46,7 +46,7 @@ public class XChartService {
         String base64String = null;
         try {
             final byte[] bitmapBytes = BitmapEncoder.getBitmapBytes(chart, BitmapEncoder.BitmapFormat.PNG);
-            base64String = Base64.getEncoder().encodeToString(bitmapBytes);
+            base64String = ResourceService.PNG_HTML_BASE54_PREFIX + Base64.getEncoder().encodeToString(bitmapBytes);
         } catch (IOException exception) {
             log.error("Exception occurred while Creating bar Chart", exception);
         }
@@ -61,7 +61,7 @@ public class XChartService {
                 .theme(Styler.ChartTheme.Matlab).build();
 
         final PieStyler styler = chart.getStyler();
-        styler.setSeriesColors(new Color[]{Color.BLUE, Color.ORANGE, Color.RED, Color.GREEN});
+        styler.setSeriesColors(new Color[]{new Color(131, 175, 112), new Color(198, 201, 106), new Color(230, 127, 131), new Color(248, 178, 103)});
         styler.setLegendBorderColor(Color.white);
         styler.setLabelType(PieStyler.LabelType.Value);
         styler.setChartBackgroundColor(Color.white);
@@ -75,7 +75,7 @@ public class XChartService {
         String base64String = null;
         try {
             final byte[] bitmapBytes = BitmapEncoder.getBitmapBytes(chart, BitmapEncoder.BitmapFormat.PNG);
-            base64String = Base64.getEncoder().encodeToString(bitmapBytes);
+            base64String = ResourceService.PNG_HTML_BASE54_PREFIX + Base64.getEncoder().encodeToString(bitmapBytes);
         } catch (IOException exception) {
             log.error("Exception occurred while Creating pie Chart", exception);
         }

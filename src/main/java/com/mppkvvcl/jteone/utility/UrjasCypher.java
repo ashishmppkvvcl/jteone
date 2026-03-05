@@ -10,13 +10,11 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.spec.KeySpec;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * This Class should be used for encryption / decryption
@@ -35,14 +33,6 @@ public class UrjasCypher {
     private static final String URJAS_IV = System.getenv("URJAS_CYPHER_IV");
     private static final String URJAS_PASSWORD = System.getenv("URJAS_CYPHER_PASSWORD");
     private static Map<String, Cipher> cyphers = new HashMap<>();
-
-    public static String getEncryptedPublicURL(final String consumerNo) {
-        if (StringUtils.isEmpty(consumerNo)) return "";
-
-        final String randomToken = RANDOM_TOKENS[new Random().ints(0, UrjasCypher.RANDOM_TOKENS.length).findAny().orElseGet(() -> 0)];
-        final String urjasCypher = encryptAndEncode("N" + consumerNo + "|" + randomToken);
-        return StringUtils.isEmpty(urjasCypher) ? "" : "https://tinyurl.com/ebilwz?q=".concat(URLEncoder.encode(urjasCypher, StandardCharsets.UTF_8));
-    }
 
     public static String encryptAndEncode(String raw) {
         if (StringUtils.isEmpty(raw)) return null;

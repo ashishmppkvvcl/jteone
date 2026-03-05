@@ -461,7 +461,6 @@
         </table>
     </div>
 
-    <!-- Mid info strip -->
     <div class="box soft mt-1">
         <table class="info-strip" style="width:100%;">
             <tr>
@@ -651,7 +650,9 @@
     <div class="mt-1">
         <div class="band-title">CONSUMPTION TREND (IN UNITS)</div>
         <div class="chart-wrap">
-            <img style="width: 100%; height: 140px;" src="${billTemplate.getBillSummary().getConsumptionTrendBarChartBase64()}" alt="">
+            <img style="width: 100%; height: 140px;"
+                 src="${billTemplate.getBillSummary().getConsumptionTrendBarChartBase64()}" alt="" width="742"
+                 height="140">
         </div>
     </div>
 
@@ -659,7 +660,8 @@
     <div class="mt-1">
         <div class="band-title">ADVERTISEMENT / AWARENESS</div>
         <div class="poster" style="height: 130px;">
-            <img src="${billTemplate.getAdvertisementInformation().getPageOneZeroBase64Image()}" style="height: 100%; width: 100%;">
+            <img src="${billTemplate.getAdvertisementInformation().getPageOneZeroBase64Image()}" alt=""
+                 style="height: 100%; width: 100%;">
         </div>
     </div>
     <div class="mt-1 box">
@@ -864,23 +866,23 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Penal Charge</td>
+                    <td>Penal Charge (+)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getPenalCharge()}</b></td>
                 </tr>
                 <tr>
-                    <td>PF Surcharge / Incentive</td>
+                    <td>PF Surcharge / Incentive (+/-)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getPfSurchargeOrIncentive()}</b></td>
                 </tr>
                 <tr>
-                    <td>ASD Installments</td>
+                    <td>ASD Installments (+)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getAsdInstallment()}</b></td>
                 </tr>
                 <tr>
-                    <td>TOD Rebate / Surcharge</td>
+                    <td>TOD Rebate / Surcharge (+/-)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getTodRebateOrSurcharge()}</b></td>
                 </tr>
                 <tr>
-                    <td>Interest on Security Deposit</td>
+                    <td>Interest on Security Deposit (-)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getSdInterest()}</b></td>
                 </tr>
                 <tr>
@@ -892,31 +894,31 @@
                     <td class="right"><b>${billTemplate.getBillInformation().getLockCredit()}</b></td>
                 </tr>
                 <tr>
-                    <td>Employee Rebate</td>
+                    <td>Employee Rebate (-)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getEmployeeRebate()}</b></td>
                 </tr>
                 <tr>
-                    <td>Prepaid Payment Rebate</td>
+                    <td>Prepaid Payment Rebate (-)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getPrepaidPaymentRebate()}</b></td>
                 </tr>
                 <tr>
-                    <td>Online Payment Rebate</td>
+                    <td>Online Payment Rebate (-)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getOnlinePaymentRebate()}</b></td>
                 </tr>
                 <tr>
-                    <td>Prompt Payment Incentive</td>
+                    <td>Prompt Payment Incentive (-)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getPromptPaymentIncentive()}</b></td>
                 </tr>
                 <tr>
-                    <td>Advance Payment Incentive</td>
+                    <td>Advance Payment Incentive (-)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getAdvancePaymentIncentive()}</b></td>
                 </tr>
                 <tr>
-                    <td>Demand Side Incentive</td>
+                    <td>Demand Side Incentive (-)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getDemandSideIncentive()}</b></td>
                 </tr>
                 <tr>
-                    <td>Wheeling Charge / Green Energy Charge</td>
+                    <td>Wheeling Charge / Green Energy Charge (+)</td>
                     <td class="right"><b>${billTemplate.getBillInformation().getWheelingCharge()}</b></td>
                 </tr>
                 <tr>
@@ -986,7 +988,12 @@
                     <td class="right"><b>${billTemplate.getBillInformation().getVigilanceDueInterestAmount()}</b></td>
                 </tr>
                 <tr>
-                    <td style="background:rgba(245,158,11,0.18); font-weight:950;">Total Amount Payable</td>
+                    <td style="background:rgba(245,158,11,0.18); font-weight:950;">
+                        Total Amount Payable
+                        @if(billTemplate.getBillInformation().getTotalPayableAmount().compareTo(java.math.BigDecimal.ZERO) < 0)
+                            (Not for Payment)
+                        @endif
+                    </td>
                     <td class="right" style="background:rgba(245,158,11,0.18); font-weight:950;">
                         <b>${billTemplate.getBillInformation().getTotalPayableAmount()}</b></td>
                 </tr>
@@ -998,13 +1005,14 @@
         </div>
     </div>
 
-    @if(!billTemplate.getConnectionInformation().isNetMeter()
+    @if(!billTemplate.getConnectionInformation().isNetMeter() && billTemplate.getTodInformation() != null
             && billTemplate.getTodInformation().getTodDetailList() != null && !billTemplate.getTodInformation().getTodDetailList().isEmpty())
         <div class="band-title">TOD DETAILS</div>
         <div class="mt-8 two-col">
             <div class="l">
                 <div class="chart-wrap" style="margin-top:2px; height: 180px;">
-                    <img src="${billTemplate.getTodInformation().getTodPieChartBase64Image()}" alt="">
+                    <img src="${billTemplate.getTodInformation().getTodPieChartBase64Image()}" alt="" width="350px"
+                         height="172px">
                 </div>
             </div>
             <div class="r">
@@ -1123,7 +1131,7 @@
     </div>
 
     @if(billTemplate.getConnectionInformation().isNetMeter())
-        @if(billTemplate.getMeterReplacementInformation().getNetMeterReplacementDetailList() != null
+        @if(billTemplate.getMeterReplacementInformation() != null && billTemplate.getMeterReplacementInformation().getNetMeterReplacementDetailList() != null
                 && !billTemplate.getMeterReplacementInformation().getNetMeterReplacementDetailList().isEmpty())
             <div class="band-title" style="margin-top:3px;">Meter Replacement and Read Detail</div>
             <div class="table-scroll" style="margin-top:6px;">
@@ -1164,7 +1172,7 @@
             </div>
         @endif
     @else
-        @if(billTemplate.getMeterReplacementInformation().getMeterReplacementDetailList() != null
+        @if(billTemplate.getMeterReplacementInformation() != null && billTemplate.getMeterReplacementInformation().getMeterReplacementDetailList() != null
                 && !billTemplate.getMeterReplacementInformation().getMeterReplacementDetailList().isEmpty())
             <div class="band-title" style="margin-top:3px;">Meter Replacement and Read Detail</div>
             <div class="table-scroll">
@@ -1372,31 +1380,33 @@
             </table>
         @endif
     </div>
-    <div class="band-title" style="margin-top:6px;">CIRCLE LEVEL ELECTRICITY CONSUMERS GRIEVANCE REDRESSAL FORUM
-        (ECGRF)
-    </div>
-    <div class="table-scroll">
-        <table class="reading-table">
-            <thead>
-            <tr>
-                <th>Member Type</th>
-                <th>Name</th>
-                <th class="right">Contact No.</th>
-                <th>Member Type</th>
-            </tr>
-            </thead>
-            <tbody>
-            @for(var ecgrf : billTemplate.getEcgrfInformationList())
+    @if(billTemplate.getEcgrfInformationList() != null && !billTemplate.getEcgrfInformationList().isEmpty())
+        <div class="band-title" style="margin-top:6px;">CIRCLE LEVEL ELECTRICITY CONSUMERS GRIEVANCE REDRESSAL FORUM
+            (ECGRF)
+        </div>
+        <div class="table-scroll">
+            <table class="reading-table">
+                <thead>
                 <tr>
-                    <td>${ecgrf.getMemberType()}</td>
-                    <td>${ecgrf.getName()}</td>
-                    <td class="right">${ecgrf.getContactNo()}</td>
-                    <td>${ecgrf.getCaseHandling()}</td>
+                    <th>Member Type</th>
+                    <th>Name</th>
+                    <th class="right">Contact No.</th>
+                    <th>Member Type</th>
                 </tr>
-            @endfor
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                @for(var ecgrf : billTemplate.getEcgrfInformationList())
+                    <tr>
+                        <td>${ecgrf.getMemberType()}</td>
+                        <td>${ecgrf.getName()}</td>
+                        <td class="right">${ecgrf.getContactNo()}</td>
+                        <td>${ecgrf.getCaseHandling()}</td>
+                    </tr>
+                @endfor
+                </tbody>
+            </table>
+        </div>
+    @endif
 
     <div class="page-footer">
         <div class="page-footer-left">${billTemplate.getConsumerInformation().getConsumerNo()}</div>

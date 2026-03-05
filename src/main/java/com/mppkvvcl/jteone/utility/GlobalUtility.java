@@ -20,7 +20,6 @@ public class GlobalUtility {
     public static final String EXPORT_DATE_FORMAT = "dd/MM/yyyy";
     public static final String BILL_MONTH_FORMAT = "MMM-yyyy";
     public static final int GROUP_NO_PREFIX_LENGTH = 3;
-    public static final String MASKING_CHARACTER = "x";
     public static final BigDecimal HP_TO_KW_CONVERSION_MULTIPLIER = new BigDecimal("0.746");
     public static final BigDecimal KW_TO_HP_CONVERSION_MULTIPLIER = new BigDecimal("1.341");
 
@@ -110,5 +109,57 @@ public class GlobalUtility {
             log.error("Exception occurred while converting string to date", exception);
         }
         return dateInDateFormat;
+    }
+
+    public static String genericMask(final String inputData) {
+        if (org.springframework.util.StringUtils.isEmpty(inputData)) return null;
+        int lastIndex = inputData.length() - 1;
+        int lMinusTwo = inputData.length() - 3;
+        if (lastIndex <= 2 || lMinusTwo <= 0) return inputData;
+
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(inputData.charAt(0));
+        for (int index = 1; index < lMinusTwo; index++) {
+            stringBuilder.append("x");
+        }
+        stringBuilder.append(inputData.charAt(lMinusTwo));
+        stringBuilder.append(inputData.charAt(inputData.length() - 2));
+        stringBuilder.append(inputData.charAt(lastIndex));
+        return stringBuilder.toString();
+    }
+
+    public static String maskMobileNO(final String inputMobileNo) {
+        if (inputMobileNo == null || inputMobileNo.length() != 10) {
+            return inputMobileNo;
+        }
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(inputMobileNo.charAt(0));
+        stringBuilder.append(inputMobileNo.charAt(1));
+        stringBuilder.append("x");
+        stringBuilder.append("x");
+        stringBuilder.append("x");
+        stringBuilder.append("x");
+        stringBuilder.append("x");
+        stringBuilder.append(inputMobileNo.charAt(7));
+        stringBuilder.append(inputMobileNo.charAt(8));
+        stringBuilder.append(inputMobileNo.charAt(9));
+        return stringBuilder.toString();
+    }
+
+    public static String maskEmailId(final String inputEmailId) {
+        if (StringUtils.isEmpty(inputEmailId)) return null;
+
+        int indexOfAt = inputEmailId.indexOf("@");
+        if (indexOfAt <= 0) return null;
+        if (indexOfAt < 3) return inputEmailId;
+
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(inputEmailId.charAt(0));
+        stringBuilder.append(inputEmailId.charAt(1));
+        for (int index = 2; index < indexOfAt; index++) {
+            stringBuilder.append("*");
+        }
+        stringBuilder.append(inputEmailId.substring(indexOfAt));
+        return stringBuilder.toString();
     }
 }
