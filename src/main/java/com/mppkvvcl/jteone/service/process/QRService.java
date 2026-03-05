@@ -1,6 +1,7 @@
 package com.mppkvvcl.jteone.service.process;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class QRService {
@@ -23,7 +26,10 @@ public class QRService {
 
         String base64String = null;
         try {
-            final BitMatrix matrix = new MultiFormatWriter().encode(data, BarcodeFormat.QR_CODE, width, height);
+            final Map<EncodeHintType, Object> hintMap = new HashMap<>();
+            hintMap.put(EncodeHintType.MARGIN, 0);
+            final BitMatrix matrix = new MultiFormatWriter().encode(data, BarcodeFormat.QR_CODE, width, height, hintMap);
+
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             MatrixToImageWriter.writeToStream(matrix, ResourceService.IMAGE_EXTENSION_PNG, bos);
             base64String = ResourceService.PNG_HTML_BASE54_PREFIX + Base64.getEncoder().encodeToString(bos.toByteArray());
