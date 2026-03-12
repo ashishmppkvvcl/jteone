@@ -719,7 +719,7 @@
                         <span class="val">${billTemplate.getReadInformation().getSolarPlantCapacity()}</span>
                     </td>
                     <td>
-                        <span class="lbl">RESIDUAL UNITS</span>
+                        <span class="lbl">CARRY FORWARD UNITS</span>
                         <span class="val">${billTemplate.getReadInformation().getResidualUnit()}</span>
                     </td>
                     <td>
@@ -754,7 +754,7 @@
                 !{var importRead = billTemplate.getReadInformation().getReadDetailList().getFirst();}
                 !{var exportRead = billTemplate.getReadInformation().getReadDetailList().get(1);}
                 <tr>
-                    <td>Import</td>
+                    <td>IMPORT</td>
                     <td class="right"><b>${importRead.getCurrentRead()}</b></td>
                     <td class="right"><b>${importRead.getPreviousRead()}</b></td>
                     <td class="right"><b>${importRead.getMf()}</b></td>
@@ -763,7 +763,7 @@
                     <td class="right"><b>${importRead.getBilledUnit()}</b></td>
                 </tr>
                 <tr>
-                    <td>Export</td>
+                    <td>EXPORT</td>
                     <td class="right"><b>${exportRead.getCurrentRead()}</b></td>
                     <td class="right"><b>${exportRead.getPreviousRead()}</b></td>
                     <td class="right"><b>${exportRead.getMf()}</b></td>
@@ -781,9 +781,10 @@
                     <td class="right"></td>
                     <td class="right">${billTemplate.getReadInformation().getNetBilledUnit()}</td>
                 </tr>
-                @if(billTemplate.getReadInformation().getReadDetailList().size() == 3)
+                <%--@if(billTemplate.getReadInformation().getReadDetailList().size() == 3)
                     !{var generateRead = billTemplate.getReadInformation().getReadDetailList().get(2);}
                     <tr>
+                        <td>GENERATE</td>
                         <td class="right"><b>${generateRead.getCurrentRead()}</b></td>
                         <td class="right"><b>${generateRead.getPreviousRead()}</b></td>
                         <td class="right"><b>${generateRead.getMf()}</b></td>
@@ -791,7 +792,7 @@
                         <td class="right"><b>${generateRead.getAssessment()}</b></td>
                         <td class="right"><b>${generateRead.getBilledUnit()}</b></td>
                     </tr>
-                @endif
+                @endif--%>
                 </tbody>
             </table>
         @else
@@ -999,41 +1000,12 @@
                 </tr>
             </table>
 
-            <%--<div class="chart-wrap" style="margin-top:2px; height: 225px;">
-                <img src="" alt=""/>
-            </div>--%>
+            <div class="chart-wrap" style="margin-top:2px; height: 225px;">
+                <img src="${billTemplate.getAdvertisementInformation().getPageTwoOneBase64Image()}" alt=""
+                     style="height: 100%; width: 100%;">
+            </div>
         </div>
     </div>
-
-    @if(!billTemplate.getConnectionInformation().isNetMeter() && billTemplate.getTodInformation() != null
-            && billTemplate.getTodInformation().getTodDetailList() != null && !billTemplate.getTodInformation().getTodDetailList().isEmpty())
-        <div class="band-title">TOD DETAILS</div>
-        <div class="mt-8 two-col">
-            <div class="l">
-                <div class="chart-wrap" style="margin-top:2px; height: 180px;">
-                    <img src="${billTemplate.getTodInformation().getTodPieChartBase64Image()}" alt="" width="350px"
-                         height="172px">
-                </div>
-            </div>
-            <div class="r">
-                <table class="tight" style="margin-top:2px; height: 180px;">
-                    <tr>
-                        <th colspan="2">TIMING</th>
-                        <th class="right">Units</th>
-                        <th class="right">Amount (₹)</th>
-                    </tr>
-                    @for(var tod : billTemplate.getTodInformation().getTodDetailList())
-                        <tr>
-                            <td><b>${tod.getType()}</b></td>
-                            <td>${tod.getDemandHour()}</td>
-                            <td class="right">${tod.getUnit()}</td>
-                            <td class="right">${tod.getAmount()}</td>
-                        </tr>
-                    @endfor
-                </table>
-            </div>
-        </div>
-    @endif
 
     <div class="page-footer">
         <div class="page-footer-left">${billTemplate.getConsumerInformation().getConsumerNo()}</div>
@@ -1078,12 +1050,44 @@
                         <td class="right">${tod.getMeterConsumption()}</td>
                         <td class="right">${tod.getAssessment()}</td>
                         <td class="right">${tod.getFinalConsumption()}</td>
-                        <td class="right">${tod.getNetConsumption()}</td>
-                        <td class="right">${tod.getAmount()}</td>
+                        @if("IMPORT".equals(tod.getNetMeterType()))
+                            <td rowspan="2">${tod.getNetConsumption()}</td>
+                        @endif
+                        @if("IMPORT".equals(tod.getNetMeterType()))
+                            <td rowspan="2">${tod.getAmount()}</td>
+                        @endif
                     </tr>
                 @endfor
                 </tbody>
             </table>
+        </div>
+    @elseif(!billTemplate.getConnectionInformation().isNetMeter() && billTemplate.getTodInformation() != null
+            && billTemplate.getTodInformation().getTodDetailList() != null && !billTemplate.getTodInformation().getTodDetailList().isEmpty())
+        <div class="band-title">TOD DETAILS</div>
+        <div class="mt-8 two-col">
+            <div class="l">
+                <div class="chart-wrap" style="margin-top:2px; height: 180px;">
+                    <img src="${billTemplate.getTodInformation().getTodPieChartBase64Image()}" alt="" width="350px"
+                         height="172px">
+                </div>
+            </div>
+            <div class="r">
+                <table class="tight" style="margin-top:2px; height: 180px;">
+                    <tr>
+                        <th colspan="2">TIMING</th>
+                        <th class="right">Units</th>
+                        <th class="right">Amount (₹)</th>
+                    </tr>
+                    @for(var tod : billTemplate.getTodInformation().getTodDetailList())
+                        <tr>
+                            <td><b>${tod.getType()}</b></td>
+                            <td>${tod.getDemandHour()}</td>
+                            <td class="right">${tod.getUnit()}</td>
+                            <td class="right">${tod.getAmount()}</td>
+                        </tr>
+                    @endfor
+                </table>
+            </div>
         </div>
     @endif
 
@@ -1356,7 +1360,7 @@
                         </table>
                     </td>
                     <td>
-                        @if(mid < billTemplate.getVigilanceInformationList().size())
+                        @if(mid < billTemplate.getAdjustmentInformationList().size())
                             <table class="reading-table" style="margin-top:3px;">
                                 <thead>
                                 <tr>
@@ -1406,6 +1410,17 @@
                 </tbody>
             </table>
         </div>
+    @endif
+
+    @if(billTemplate.getAdvertisementInformation().getLastPageBase64Image() !=null && !billTemplate.getAdvertisementInformation().getLastPageBase64Image().isEmpty())
+        @for(var adimage : billTemplate.getAdvertisementInformation().getLastPageBase64Image())
+            <div class="mt-1">
+                <div class="band-title">ADVERTISEMENTS</div>
+                <div class="poster" style="height: 130px;">
+                    <img src="${adimage}" alt="" style="height: 100%; width: 100%;">
+                </div>
+            </div>
+        @endfor
     @endif
 
     <div class="page-footer">

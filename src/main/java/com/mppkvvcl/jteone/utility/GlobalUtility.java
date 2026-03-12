@@ -8,7 +8,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,7 +37,7 @@ public class GlobalUtility {
         //months.parallelStream().forEach(month -> {
         months.forEach(month -> {
             if (StringUtils.isNotEmpty(month)) {
-                dates.add(getDateFromStringFormat(month, BILL_MONTH_FORMAT));
+                dates.add(getDateFromStringBillMonth(month));
             }
         });
         List<LocalDate> sortedDates = dates;
@@ -43,7 +46,7 @@ public class GlobalUtility {
         } else {
             sortedDates = dates.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
         }
-        return sortedDates.stream().map(billDate -> getDateInStringFromDate(billDate, BILL_MONTH_FORMAT).toUpperCase()).collect(Collectors.toList());
+        return sortedDates.stream().map(billDate -> getBillMonthInStringFromDate(billDate).toUpperCase()).collect(Collectors.toList());
     }
 
     public static BigDecimal add(final BigDecimal... values) {
@@ -69,8 +72,8 @@ public class GlobalUtility {
 
         String previousMonth = null;
         try {
-            final LocalDate monthDate = getDateFromStringFormat(billMonth, BILL_MONTH_FORMAT);
-            previousMonth = getDateInStringFromDate(monthDate.minusMonths(1L), BILL_MONTH_FORMAT);
+            final LocalDate monthDate = getDateFromStringBillMonth(billMonth);
+            previousMonth = getBillMonthInStringFromDate(monthDate.minusMonths(1L));
             previousMonth = previousMonth.toUpperCase();
 
         } catch (Exception e) {
@@ -92,7 +95,7 @@ public class GlobalUtility {
 
         String dateInStringFormat = null;
         try {
-            dateInStringFormat = date.format(DateTimeFormatter.ofPattern(dateFormat));
+            dateInStringFormat = date.format(DateTimeFormatter.ofPattern(dateFormat, Locale.ENGLISH));
         } catch (Exception exception) {
             log.error("Exception occurred while converting date to string", exception);
         }
@@ -104,11 +107,38 @@ public class GlobalUtility {
 
         LocalDate dateInDateFormat = null;
         try {
-            dateInDateFormat = LocalDate.parse(dateInStringFormat, DateTimeFormatter.ofPattern(dateFormat));
+            dateInDateFormat = LocalDate.parse(dateInStringFormat, DateTimeFormatter.ofPattern(dateFormat, Locale.ENGLISH));
         } catch (Exception exception) {
             log.error("Exception occurred while converting string to date", exception);
         }
         return dateInDateFormat;
+    }
+
+    public static LocalDate getDateFromStringBillMonth(String dateInStringFormat) {
+        if (dateInStringFormat == null) return null;
+
+        LocalDate date = null;
+        try {
+            final Date dateInDateFormat = new SimpleDateFormat(BILL_MONTH_FORMAT).parse(dateInStringFormat);
+            Instant instant = dateInDateFormat.toInstant();
+            date = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        } catch (Exception exception) {
+            log.error("Exception occurred while converting bill month string to date", exception);
+        }
+        return date;
+    }
+
+    public static String getBillMonthInStringFromDate(final LocalDate date) {
+        if (date == null) return null;
+
+        String dateInStringFormat = null;
+        try {
+            final Date utilDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            dateInStringFormat = new SimpleDateFormat(BILL_MONTH_FORMAT).format(utilDate);
+        } catch (Exception exception) {
+            log.error("Exception occurred while converting date to Bill Month string", exception);
+        }
+        return dateInStringFormat;
     }
 
     public static String genericMask(final String inputData) {

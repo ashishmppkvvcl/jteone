@@ -59,7 +59,7 @@ public class BillServiceImpl {
         //MIS Checking
         final BillIdentifierDTO billIdentifierDTO = billMasterService.getForLatestBillIdentifierByConsumerNoAndDeleted(consumerNo, false);
         if (billIdentifierDTO == null) {
-            messageDTO.setMessage("No bill found for " + consumerNo);
+            messageDTO.setMessage("No bill found in MIS for " + consumerNo);
             log.info(messageDTO.getMessage());
             return null;
         }
@@ -108,6 +108,11 @@ public class BillServiceImpl {
 
         //MIS Checking
         final BillIdentifierDTO billIdentifierDTO = billMasterService.getForBillIdentifierByConsumerNoAndBillMonthAndDeleted(consumerNo, billMonth, false);
+        if (billIdentifierDTO == null) {
+            messageDTO.setMessage("No bill found in MIS for " + consumerNo);
+            log.info(messageDTO.getMessage());
+            return null;
+        }
         String database = "MIS";
         if (billIdentifierDTO.isFRT6MonthlyConsumer()) {
             database = "MIS";

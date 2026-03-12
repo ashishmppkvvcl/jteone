@@ -56,7 +56,7 @@ public class DiscomService {
         if (imageHtmlPrefix == null)
             imageHtmlPrefix = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.SVG_HTML_BASE54_PREFIX : ResourceService.PNG_HTML_BASE54_PREFIX;
 
-        discomLogoAsBase64 = imageHtmlPrefix + resourceService.convertPngToBase64(resourceService.getImage(discom.getShortName().toLowerCase() + "." + imageExtension, ResourceService.IMAGE_TYPE_LOGO));
+        discomLogoAsBase64 = imageHtmlPrefix + resourceService.convertImageToBase64(resourceService.getImage(discom.getShortName().toLowerCase() + "." + imageExtension, ResourceService.IMAGE_TYPE_LOGO));
         return discomLogoAsBase64;
     }
 
@@ -70,7 +70,7 @@ public class DiscomService {
         if (imageHtmlPrefix == null)
             imageHtmlPrefix = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.SVG_HTML_BASE54_PREFIX : ResourceService.PNG_HTML_BASE54_PREFIX;
 
-        mpstateLogoAsBase64 = imageHtmlPrefix + resourceService.convertPngToBase64(resourceService.getImage("state_mp." + imageExtension, ResourceService.IMAGE_TYPE_LOGO));
+        mpstateLogoAsBase64 = imageHtmlPrefix + resourceService.convertImageToBase64(resourceService.getImage("state_mp." + imageExtension, ResourceService.IMAGE_TYPE_LOGO));
         return mpstateLogoAsBase64;
     }
 
@@ -79,12 +79,8 @@ public class DiscomService {
 
         final DiscomInterface discom = get();
         if (discom == null) return null;
-        if (imageExtension == null)
-            imageExtension = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.IMAGE_EXTENSION_SVG : ResourceService.IMAGE_EXTENSION_PNG;
-        if (imageHtmlPrefix == null)
-            imageHtmlPrefix = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.SVG_HTML_BASE54_PREFIX : ResourceService.PNG_HTML_BASE54_PREFIX;
 
-        whatsappQRAsBase64 = imageHtmlPrefix + resourceService.convertPngToBase64(resourceService.getImage("whatsapp_" + discom.getShortName().toLowerCase() + "." + imageExtension, ResourceService.IMAGE_TYPE_QR));
+        whatsappQRAsBase64 = ResourceService.PNG_HTML_BASE54_PREFIX + resourceService.convertImageToBase64(resourceService.getImage("whatsapp_" + discom.getShortName().toLowerCase() + "." + ResourceService.IMAGE_EXTENSION_PNG, ResourceService.IMAGE_TYPE_QR));
         return whatsappQRAsBase64;
     }
 }

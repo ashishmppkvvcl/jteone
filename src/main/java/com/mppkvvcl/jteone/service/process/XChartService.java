@@ -38,6 +38,9 @@ public class XChartService {
         styler.setLegendBorderColor(Color.WHITE);
         styler.setLegendPosition(Styler.LegendPosition.OutsideS);
         styler.setLegendLayout(Styler.LegendLayout.Horizontal);
+        styler.setLabelsVisible(true);
+        styler.setLabelsRotation(90);
+        styler.setLabelsPosition(0.4);
 
         seriesDataMap.forEach((seriesName, yAxisData) -> {
             if (!GlobalUtility.isEmpty(yAxisData)) chart.addSeries(seriesName, xAxisLabels, yAxisData);

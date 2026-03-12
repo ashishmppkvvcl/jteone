@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -15,6 +16,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ResourceService {
@@ -31,7 +35,7 @@ public class ResourceService {
     public static final String PNG_HTML_BASE54_PREFIX = "data:image/png;base64,";
     public static final String SVG_HTML_BASE54_PREFIX = "data:image/svg+xml;base64,";
     public static final String BMP_HTML_BASE54_PREFIX = "data:image/bmp;base64,";
-    public static final String JPEG_HTML_BASE54_PREFIX = "data:image/jpeg;base64,,";
+    public static final String JPEG_HTML_BASE54_PREFIX = "data:image/jpeg;base64,";
 
     @Value("classpath:images")
     private String imagePrefix;
@@ -76,7 +80,35 @@ public class ResourceService {
         return url;
     }
 
-    public String convertPngToBase64(URL url) {
+
+    public List<URL> getImageFromDirectoryExcept(final String dirPath, final String imageExtension, final List<String> excludedNames) {
+        if (dirPath == null || excludedNames == null) return null;
+
+        final String misResources = System.getenv(GlobalConstant.MIS_JTE_RESOURCES);
+        final String refPath = StringUtils.isEmpty(misResources) ? imagePrefix + "/" + dirPath : misResources + "/" + imagePrefix.replaceAll("classpath:", "") + "/" + dirPath;
+
+        List<URL> urls = null;
+        final Path dir = Paths.get(refPath);
+
+        try (Stream<Path> stream = Files.list(dir)) {
+            urls = stream.filter(Files::isRegularFile).map(Path::getFileName).map(Path::toString)
+                    .filter(name -> name.toLowerCase().endsWith(imageExtension) && !excludedNames.contains(name))
+                    .map(fileName -> {
+                        try {
+                            return ResourceUtils.getURL(refPath + "/" + fileName);
+                        } catch (FileNotFoundException exception) {
+                            log.error("Error while getting files parsing URL: {}", dirPath, exception);
+                        }
+                        return null;
+                    })
+                    .collect(Collectors.toList());
+        } catch (IOException exception) {
+            log.error("Error while getting files from directory: {}", dirPath, exception);
+        }
+        return urls;
+    }
+
+    public String convertImageToBase64(URL url) {
         if (url == null) return null;
 
         byte[] imageBytes = null;
