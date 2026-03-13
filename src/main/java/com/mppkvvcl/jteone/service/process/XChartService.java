@@ -1,6 +1,6 @@
 package com.mppkvvcl.jteone.service.process;
 
-import com.mppkvvcl.jteone.utility.GlobalUtility;
+import com.mppkvvcl.jteone.utility.GlobalUtil;
 import org.knowm.xchart.*;
 import org.knowm.xchart.style.CategoryStyler;
 import org.knowm.xchart.style.PieStyler;
@@ -20,8 +20,8 @@ import java.util.Map;
 public class XChartService {
     private static final Logger log = LoggerFactory.getLogger(XChartService.class);
 
-    public String getBarChartBase64Image(final List xAxisLabels, final Map<String, List<BigDecimal>> seriesDataMap, final int width, final int height) {
-        if (GlobalUtility.isEmpty(xAxisLabels) || seriesDataMap == null || seriesDataMap.isEmpty() || width == 0 || height == 0)
+    public String getBarChartBase64Image(final List<String> xAxisLabels, final Map<String, List<BigDecimal>> seriesDataMap, final int width, final int height) {
+        if (GlobalUtil.isEmpty(xAxisLabels) || seriesDataMap == null || seriesDataMap.isEmpty() || width == 0 || height == 0)
             return null;
 
         final CategoryChart chart = new CategoryChartBuilder().width(width).height(height)
@@ -43,7 +43,7 @@ public class XChartService {
         styler.setLabelsPosition(0.4);
 
         seriesDataMap.forEach((seriesName, yAxisData) -> {
-            if (!GlobalUtility.isEmpty(yAxisData)) chart.addSeries(seriesName, xAxisLabels, yAxisData);
+            if (!GlobalUtil.isEmpty(yAxisData)) chart.addSeries(seriesName, xAxisLabels, yAxisData);
         });
 
         String base64String = null;
@@ -71,9 +71,7 @@ public class XChartService {
         styler.setPlotBorderVisible(false);
         styler.setLegendPosition(Styler.LegendPosition.InsideSE);
 
-        dataMap.forEach((seriesName, value) -> {
-            chart.addSeries(seriesName, value);
-        });
+        dataMap.forEach(chart::addSeries);
 
         String base64String = null;
         try {

@@ -1,13 +1,14 @@
 package com.mppkvvcl.jteone.dtos.templates.pdfbill;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class MeterReplacementDetail {
 
     private int index;
 
     private String meterDetail;
-    private String replacementDate;
+    private LocalDate replacementDate;
     private BigDecimal previousRead;
     private BigDecimal currentRead;
     private BigDecimal consumption;
@@ -29,11 +30,11 @@ public class MeterReplacementDetail {
         this.meterDetail = meterDetail;
     }
 
-    public String getReplacementDate() {
+    public LocalDate getReplacementDate() {
         return replacementDate;
     }
 
-    public void setReplacementDate(String replacementDate) {
+    public void setReplacementDate(LocalDate replacementDate) {
         this.replacementDate = replacementDate;
     }
 
@@ -72,7 +73,7 @@ public class MeterReplacementDetail {
     public MeterReplacementDetail() {
     }
 
-    public MeterReplacementDetail(int index, String meterDetail, String replacementDate, BigDecimal previousRead, BigDecimal currentRead, BigDecimal consumption, BigDecimal proratedCurrentBill) {
+    public MeterReplacementDetail(int index, String meterDetail, LocalDate replacementDate, BigDecimal previousRead, BigDecimal currentRead, BigDecimal consumption, BigDecimal proratedCurrentBill) {
         this.index = index;
         this.meterDetail = meterDetail;
         this.replacementDate = replacementDate;

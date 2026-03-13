@@ -1,12 +1,14 @@
 package com.mppkvvcl.jteone.dtos.templates.pdfbill;
 
 
+import java.time.LocalDate;
+
 public class PaymentHistoryInformation {
 
     private int index;
 
     private long amount;
-    private String payDate;
+    private LocalDate payDate;
     private String payMonth;
     private String cacNo;
     private String payMode;
@@ -27,11 +29,11 @@ public class PaymentHistoryInformation {
         this.amount = amount;
     }
 
-    public String getPayDate() {
+    public LocalDate getPayDate() {
         return payDate;
     }
 
-    public void setPayDate(String payDate) {
+    public void setPayDate(LocalDate payDate) {
         this.payDate = payDate;
     }
 
@@ -62,7 +64,7 @@ public class PaymentHistoryInformation {
     public PaymentHistoryInformation() {
     }
 
-    public PaymentHistoryInformation(int index, long amount, String payDate, String payMonth, String cacNo, String payMode) {
+    public PaymentHistoryInformation(int index, long amount, LocalDate payDate, String payMonth, String cacNo, String payMode) {
         this.index = index;
         this.amount = amount;
         this.payDate = payDate;

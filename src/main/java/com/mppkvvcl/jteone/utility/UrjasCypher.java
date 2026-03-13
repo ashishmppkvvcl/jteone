@@ -28,11 +28,11 @@ public class UrjasCypher {
     public static final String[] RANDOM_TOKENS = {"ngb", "mpwz", "urjas", "mis", "win", "pmr", "naljal", "sms", "sybase", "rms"};
 
     public static final String ENCRYPT_CYPHER = "encrypt_cypher";
-    public static final String DECRYPT_CYPHER = "decrypt_cypher";
-    private static String SALT = "SALT_VALUE";
+    //public static final String DECRYPT_CYPHER = "decrypt_cypher";
+    //private static String SALT = "SALT_VALUE";
     private static final String URJAS_IV = System.getenv("URJAS_CYPHER_IV");
     private static final String URJAS_PASSWORD = System.getenv("URJAS_CYPHER_PASSWORD");
-    private static Map<String, Cipher> cyphers = new HashMap<>();
+    private static final Map<String, Cipher> cyphers = new HashMap<>();
 
     public static String encryptAndEncode(String raw) {
         if (StringUtils.isEmpty(raw)) return null;
@@ -66,7 +66,7 @@ public class UrjasCypher {
     private static Key generateKey() throws Exception {
         final SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         final char[] password = URJAS_PASSWORD.toCharArray();
-        final byte[] salt = SALT.getBytes(StandardCharsets.UTF_8);
+        final byte[] salt = "SALT_VALUE".getBytes(StandardCharsets.UTF_8);
         final KeySpec spec = new PBEKeySpec(password, salt, 65536, 128);
         final byte[] encoded = factory.generateSecret(spec).getEncoded();
         return new SecretKeySpec(encoded, "AES");

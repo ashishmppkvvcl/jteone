@@ -1,13 +1,14 @@
 package com.mppkvvcl.jteone.dtos.templates.pdfbill;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReadInformation {
 
     private String meterSrNo;
-    private String date;
+    private LocalDate date;
     private String type;
     private String source;
 
@@ -31,11 +32,11 @@ public class ReadInformation {
         this.meterSrNo = meterSrNo;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

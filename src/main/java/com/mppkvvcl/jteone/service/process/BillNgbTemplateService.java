@@ -8,7 +8,7 @@ import com.mppkvvcl.jteone.service.daos.mis.BillMessageService;
 import com.mppkvvcl.jteone.service.daos.mis.DiscomService;
 import com.mppkvvcl.jteone.service.daos.ngb.*;
 import com.mppkvvcl.jteone.utility.GlobalConstant;
-import com.mppkvvcl.jteone.utility.GlobalUtility;
+import com.mppkvvcl.jteone.utility.GlobalUtil;
 import com.mppkvvcl.jteone.utility.UrjasCypher;
 import com.mppkvvcl.misdao.dtos.BillIdentifierDTO;
 import com.mppkvvcl.misdao.interfaces.DiscomInterface;
@@ -181,11 +181,11 @@ public class BillNgbTemplateService {
         }
 
         final String billType = billTypeCodeService.getDescriptionByCode(bill.getBillTypeCode());
-        String pdcDate = null;
+        LocalDate pdcDate = null;
         if (BillTypeCodeInterface.CODE_LB.equals(bill.getBillTypeCode()) || BillTypeCodeInterface.CODE_PDC.equals(bill.getBillTypeCode())) {
             final ConsumerMiscellaneousInformationInterface pdcMiscellaneous = consumerMiscellaneousInformationService.getActivePropertyByConsumerNoAndPropertyName(consumerNo, ConsumerMiscellaneousInformationInterface.PROPERTY_NAME_PDC_BILL_MONTH);
             if (pdcMiscellaneous != null)
-                pdcDate = GlobalUtility.getDateInStringFromDate(pdcMiscellaneous.getEffectiveEndDate(), GlobalUtility.EXPORT_DATE_FORMAT);
+                pdcDate = pdcMiscellaneous.getEffectiveEndDate();
         }
 
         String billBasis = null;
@@ -193,7 +193,7 @@ public class BillNgbTemplateService {
         final SecurityDepositInterface securityDeposit = securityDepositService.getConsumerNoAndEffectiveStartDateAndEffectiveEndDateOrderByIdAsc(consumerNo, bill.getBillDate());
         final BigDecimal sdHeld = (securityDeposit != null) ? securityDeposit.getAmount() : BigDecimal.ZERO;
         final BigDecimal wheelingCharges = ngbAdjustmentService.getAmountByConsumerNoAndCodeAndPostingBillMonthAndApprovalStatusAndPostedAndDeleted(consumerNo, AdjustmentInterface.WHEELING_CHARGES, billMonth, GlobalConstant.APPROVED, true, false);
-        final BigDecimal todSurchargeAndRebate = GlobalUtility.add(bill.getOtherAdjustment(), bill.getXrayFixedCharge());
+        final BigDecimal todSurchargeAndRebate = GlobalUtil.add(bill.getOtherAdjustment(), bill.getXrayFixedCharge());
 
         Long unpostedPayment = paymentService.getAmountByConsumerNoAndPostingBillMonthAndPostedDeleted(consumerNo, billMonth, false, false);
         BigDecimal rcdcAmount = null;
@@ -213,7 +213,7 @@ public class BillNgbTemplateService {
         BigDecimal vigilenceEnergyCharge = BigDecimal.ZERO;
         BigDecimal vigilenceSurcharge = BigDecimal.ZERO;
         final List<ConsumerPanchnamaInformationInterface> consumerPanchnamaInformationList = consumerPanchnamaInformationService.getByConsumerNoAndPostedAndDeleted(consumerNo, false, false);
-        if (!GlobalUtility.isEmpty(consumerPanchnamaInformationList)) {
+        if (!GlobalUtil.isEmpty(consumerPanchnamaInformationList)) {
             for (ConsumerPanchnamaInformationInterface consumerPanchnamaInformation : consumerPanchnamaInformationList) {
                 if (consumerPanchnamaInformation.getTotalBill() != null)
                     totalPanchanamaBillAmount = totalPanchanamaBillAmount.add(consumerPanchnamaInformation.getTotalBill());
@@ -236,32 +236,32 @@ public class BillNgbTemplateService {
 
         // Payable Calculation
         final BigDecimal deduction = new BigDecimal(unpostedPayment);
-        BigDecimal payableAmount = GlobalUtility.subtract(bill.getNetBill(), deduction);
-        payableAmount = GlobalUtility.add(payableAmount, totalPanchanamaBillAmount).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal payableAmount = GlobalUtil.subtract(bill.getNetBill(), deduction);
+        payableAmount = GlobalUtil.add(payableAmount, totalPanchanamaBillAmount).setScale(2, RoundingMode.HALF_UP);
         BigDecimal payableTotalingAmount = payableAmount;
         BigDecimal payableBeforeDueDate = payableAmount;
         BigDecimal payableAfterDueDate = payableAmount;
         if (LocalDate.now().isAfter(bill.getDueDate()) && payableAmount.compareTo(BigDecimal.ZERO) > 0) {
-            payableAmount = payableAfterDueDate = GlobalUtility.add(payableBeforeDueDate, bill.getCurrentBillSurcharge());
+            payableAmount = payableAfterDueDate = GlobalUtil.add(payableBeforeDueDate, bill.getCurrentBillSurcharge());
         }
         if (payableAmount.compareTo(BigDecimal.ZERO) < 0) {
             payableAmount = payableBeforeDueDate = payableAfterDueDate = BigDecimal.ZERO;
         }
 
         final BillSummary billSummary = new BillSummary(String.valueOf(bill.getId()), bill.getBillMonth(), payableAmount, payableBeforeDueDate, payableAfterDueDate, bill.getCurrentBill(), bill.getArrear().add(bill.getSurchargeDemanded()), null, null, null,
-                GlobalUtility.getDateInStringFromDate(bill.getDueDate(), GlobalUtility.EXPORT_DATE_FORMAT), GlobalUtility.getDateInStringFromDate(bill.getChequeDueDate(), GlobalUtility.EXPORT_DATE_FORMAT), bill.getBilledUnit(), null, null,
-                GlobalUtility.getDateInStringFromDate(bill.getBillDate(), GlobalUtility.EXPORT_DATE_FORMAT), billType, billBasis, null, null, sdHeld, bill.getAsdArrear(), pdcDate);
+                bill.getDueDate(), bill.getChequeDueDate(), bill.getBilledUnit(), null, null,
+                bill.getBillDate(), billType, billBasis, null, null, sdHeld, bill.getAsdArrear(), pdcDate);
 
-        final BigDecimal subTotalOne = GlobalUtility.add(bill.getEnergyCharge(), bill.getFcaCharge(), bill.getFixedCharge());
-        final BigDecimal subTotalTwo = GlobalUtility.add(bill.getElectricityDuty(), bill.getCcbAdjustment());
-        final BigDecimal penalCharge = GlobalUtility.add(bill.getAdditionalFixedCharges1(), bill.getAdditionalFixedCharges2());
-        final BigDecimal subTotalThree = GlobalUtility.add(penalCharge, bill.getPfCharge(), bill.getAsdInstallment(), todSurchargeAndRebate, bill.getSdInterest(), bill.getLoadFactorIncentive(), bill.getLockCredit(), bill.getEmployeeRebate(), bill.getPrepaidMeterRebate(),
+        final BigDecimal subTotalOne = GlobalUtil.add(bill.getEnergyCharge(), bill.getFcaCharge(), bill.getFixedCharge());
+        final BigDecimal subTotalTwo = GlobalUtil.add(bill.getElectricityDuty(), bill.getCcbAdjustment());
+        final BigDecimal penalCharge = GlobalUtil.add(bill.getAdditionalFixedCharges1(), bill.getAdditionalFixedCharges2());
+        final BigDecimal subTotalThree = GlobalUtil.add(penalCharge, bill.getPfCharge(), bill.getAsdInstallment(), todSurchargeAndRebate, bill.getSdInterest(), bill.getLoadFactorIncentive(), bill.getLockCredit(), bill.getEmployeeRebate(), bill.getPrepaidMeterRebate(),
                 bill.getOnlinePaymentRebate(), bill.getPromptPaymentIncentive(), bill.getAdvancePaymentIncentive(), bill.getDemandSideIncentive(), wheelingCharges);
         final BigDecimal subTotalFour = bill.getCurrentBill();
         final BillInformation billInformation = new BillInformation(bill.getEnergyCharge(), bill.getFcaCharge(), bill.getFixedCharge(), subTotalOne, bill.getElectricityDuty(), bill.getCcbAdjustment(), subTotalTwo,
                 penalCharge, bill.getPfCharge(), bill.getAsdInstallment(), todSurchargeAndRebate, bill.getSdInterest(), bill.getLoadFactorIncentive(), bill.getLockCredit(), bill.getEmployeeRebate(), bill.getPrepaidMeterRebate(),
                 bill.getOnlinePaymentRebate(), bill.getPromptPaymentIncentive(), bill.getAdvancePaymentIncentive(), bill.getDemandSideIncentive(), wheelingCharges == null ? BigDecimal.ZERO : wheelingCharges, subTotalThree,
-                bill.getSubsidy(), subTotalFour, bill.getArrear(), bill.getCumulativeSurcharge(), bill.getAsdArrear(), bill.getNetBill(), unpostedPayment, rcdcAmount,
+                bill.getSubsidy(), subTotalFour, bill.getArrear(), bill.getCumulativeSurcharge(), bill.getAsdArrear(), bill.getNetBill(), unpostedPayment, rcdcAmount.longValue(),
                 vigilenceEnergyCharge, vigilenceSurcharge, payableTotalingAmount, bill.getBilledPF(), bill.getBilledMD(), bill.getPreviousRead(), bill.getMeteredUnit(), bill.getCurrentRead(), bill.getSurchargeDemanded());
 
         templateData.setBillSummary(billSummary);
@@ -301,91 +301,82 @@ public class BillNgbTemplateService {
         //Reading History
         if (ConsumerConnectionInformationInterface.METERING_STATUS_METERED.equals(templateData.getConnectionInformation().getMeteringStatus())) {
             final List<ReadMasterInterface> readMasterList = readMasterService.getByConsumerNoAndReplacementFlagAndUsedOnBillAndBillMonthLessThanOrderByBillMonthDESC(consumerNo, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, ReadMasterInterface.USED_ON_BILL, billMonth, 6);
-            if (!GlobalUtility.isEmpty(readMasterList)) {
-                final List xAxisLabels = new ArrayList();
+            if (!GlobalUtil.isEmpty(readMasterList)) {
+                final List<String> xAxisLabels = new ArrayList();
                 final List<BigDecimal> barChartCurrentYearReadList = new ArrayList<>();
                 final List<BigDecimal> barChartLastYearReadList = new ArrayList<>();
                 xAxisLabels.add(billMonth.substring(0, 3));
-                barChartCurrentYearReadList.add(templateData.getBillSummary().getConsumption());
+                barChartCurrentYearReadList.add(templateData.getBillSummary().getConsumption().setScale(2, RoundingMode.HALF_UP));
 
                 int maxIndex = readMasterList.size() - 1;
                 final List<ReadHistoryInformation> readHistoryInformationList = new ArrayList<>();
                 if (maxIndex >= 0) {
                     ReadMasterInterface readMaster = readMasterList.getFirst();
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(1, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
+                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(1, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
                         xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
-                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
                     }
                 }
                 if (maxIndex >= 1) {
                     ReadMasterInterface readMaster = readMasterList.get(1);
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(2, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
+                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(2, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
                         xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
-                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
                     }
                 }
                 if (maxIndex >= 2) {
                     ReadMasterInterface readMaster = readMasterList.get(2);
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(3, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
+                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(3, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
                         xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
-                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
                     }
                 }
                 if (maxIndex >= 3) {
                     ReadMasterInterface readMaster = readMasterList.get(3);
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(4, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
+                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(4, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
                         xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
-                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
                     }
                 }
                 if (maxIndex >= 4) {
                     ReadMasterInterface readMaster = readMasterList.get(4);
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(5, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
+                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(5, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
                         xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
-                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
+                        barChartCurrentYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
                     }
                 }
-                /*if (maxIndex >= 5) {
-                    ReadMasterInterface readMaster = readMasterList.get(5);
-                    if (readMaster != null) {
-                        //final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(6, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
-                        //readHistoryInformationList.add(readHistoryInformation);
-                        //xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
-                        //barChartCurrentYearReadList.add(readMaster.getTotalConsumption());
-                    }
-                }*/
                 //Last year's same month reading
-                final int year = Integer.valueOf(billMonth.substring(4));
+                final int year = Integer.parseInt(billMonth.substring(4));
                 final String lastYearMonth = billMonth.substring(0, 4).concat(String.valueOf(year - 1));
-                final Sort sort = GlobalUtility.getSortObject(SortOrder.DESC);
+                final Sort sort = GlobalUtil.getSortObject(SortOrder.DESC);
                 List<ReadMasterInterface> lastYearReadMasterInterfaces = readMasterService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(consumerNo, lastYearMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, ReadMasterInterface.USED_ON_BILL, sort);
                 if (lastYearReadMasterInterfaces != null && lastYearReadMasterInterfaces.size() == 1) {
                     ReadMasterInterface readMaster = lastYearReadMasterInterfaces.getFirst();
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(6, readMaster.getBillMonth(), GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT), readMaster.getReading(), readMaster.getTotalConsumption());
+                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(6, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
                         readHistoryInformationList.add(readHistoryInformation);
-                        barChartLastYearReadList.add(readMaster.getTotalConsumption());
+                        barChartLastYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
                     }
                 }
 
-                if (!GlobalUtility.isEmpty(xAxisLabels) && !GlobalUtility.isEmpty(barChartCurrentYearReadList)) {
+                if (!GlobalUtil.isEmpty(xAxisLabels) && !GlobalUtil.isEmpty(barChartCurrentYearReadList)) {
                     final Map<String, List<BigDecimal>> barChartData = new HashMap<>();
                     barChartData.put("This Year", barChartCurrentYearReadList);
 
                     final List<ReadMasterInterface> lastYearReadMasterList = readMasterService.getByConsumerNoAndReplacementFlagAndUsedOnBillAndBillMonthLessThanOrderByBillMonthDESC(consumerNo, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, ReadMasterInterface.USED_ON_BILL, lastYearMonth, 5);
-                    if (!GlobalUtility.isEmpty(lastYearReadMasterList)) {
+                    if (!GlobalUtil.isEmpty(lastYearReadMasterList)) {
                         for (ReadMasterInterface readMaster : lastYearReadMasterList)
-                            barChartLastYearReadList.add(readMaster.getTotalConsumption());
+                            barChartLastYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
 
                         if (barChartCurrentYearReadList.size() == barChartLastYearReadList.size())
                             barChartData.put("Last Year", barChartLastYearReadList);
@@ -400,20 +391,20 @@ public class BillNgbTemplateService {
 
         //Payment History
         final List<PaymentInterface> paymentList = paymentService.getByConsumerNoAndDeletedAndPostingBillMonthLessThanEqualOrderByPayDateDESC(consumerNo, false, billMonth, 2);
-        if (!GlobalUtility.isEmpty(paymentList)) {
+        if (!GlobalUtil.isEmpty(paymentList)) {
             int maxIndex = paymentList.size() - 1;
             final List<PaymentHistoryInformation> paymentHistoryInformationList = new ArrayList<>();
             if (maxIndex >= 0) {
                 PaymentInterface payment = paymentList.getFirst();
                 if (payment != null) {
-                    final PaymentHistoryInformation paymentHistoryInformation = new PaymentHistoryInformation(1, payment.getAmount(), GlobalUtility.getDateInStringFromDate(payment.getPayDate(), GlobalUtility.EXPORT_DATE_FORMAT), payment.getPostingBillMonth(), payment.getCacNo(), payment.getPayMode());
+                    final PaymentHistoryInformation paymentHistoryInformation = new PaymentHistoryInformation(1, payment.getAmount(), payment.getPayDate(), payment.getPostingBillMonth(), payment.getCacNo(), payment.getPayMode());
                     paymentHistoryInformationList.add(paymentHistoryInformation);
                 }
             }
             if (maxIndex >= 1) {
                 PaymentInterface payment = paymentList.get(1);
                 if (payment != null) {
-                    final PaymentHistoryInformation paymentHistoryInformation = new PaymentHistoryInformation(2, payment.getAmount(), GlobalUtility.getDateInStringFromDate(payment.getPayDate(), GlobalUtility.EXPORT_DATE_FORMAT), payment.getPostingBillMonth(), payment.getCacNo(), payment.getPayMode());
+                    final PaymentHistoryInformation paymentHistoryInformation = new PaymentHistoryInformation(2, payment.getAmount(), payment.getPayDate(), payment.getPostingBillMonth(), payment.getCacNo(), payment.getPayMode());
                     paymentHistoryInformationList.add(paymentHistoryInformation);
                 }
             }
@@ -422,11 +413,10 @@ public class BillNgbTemplateService {
 
         //Average Calculation
         long days = 30L; // For PDC and Un-metered Consumer
-        final LocalDate currentReadDate = GlobalUtility.getDateFromStringFormat(templateData.getReadInformation().getDate(), GlobalUtility.EXPORT_DATE_FORMAT);
+        final LocalDate currentReadDate = templateData.getReadInformation().getDate();
         if (currentReadDate != null) {
-            LocalDate previousReadDate = null;
-            if (!GlobalUtility.isEmpty(templateData.getReadHistoryInformationList())) {
-                previousReadDate = GlobalUtility.getDateFromStringFormat(templateData.getReadHistoryInformationList().getFirst().getReadDate(), GlobalUtility.EXPORT_DATE_FORMAT);
+            if (!GlobalUtil.isEmpty(templateData.getReadHistoryInformationList())) {
+                final LocalDate previousReadDate = templateData.getReadHistoryInformationList().getFirst().getReadDate();
                 days = ChronoUnit.DAYS.between(previousReadDate, currentReadDate);
                 if (days != 0) {
                     templateData.getBillSummary().setDailyAverageBill(templateData.getBillSummary().getCurrentBill().divide(BigDecimal.valueOf(days), 2, RoundingMode.HALF_UP));
@@ -448,7 +438,7 @@ public class BillNgbTemplateService {
         final String billMonth = templateData.getBillSummary().getBillMonth();
 
         final List<AdjustmentInterface> adjustmentList = ngbAdjustmentService.getByConsumerNoAndPostingBillMonthAndApprovalStatusAndPostedAndDeletedOrderByCodeAscIdAsc(consumerNo, billMonth, GlobalConstant.APPROVED, true, false);
-        if (!GlobalUtility.isEmpty(adjustmentList)) {
+        if (!GlobalUtil.isEmpty(adjustmentList)) {
             final List<AdjustmentInformation> adjustmentInformationList = new ArrayList<>();
             for (int index = 0; index < adjustmentList.size(); index++) {
                 final AdjustmentInterface adjustment = adjustmentList.get(index);
@@ -458,8 +448,9 @@ public class BillNgbTemplateService {
             templateData.setAdjustmentInformationList(adjustmentInformationList);
         }
 
-        final List<BillCalculationLineInterface> billCalculationLineList = billCalculationLineService.getByBillId(billId);
-        if (!GlobalUtility.isEmpty(billCalculationLineList)) {
+        final List<BillCalculationLineInterface> billCalculationLineList = billCalculationLineService.getByBillIdAndHeadIn(billId, Arrays.asList(BillCalculationLineInterface.HEAD_ENERGY_CHARGE, BillCalculationLineInterface.HEAD_FIXED_CHARGE));
+        if (!GlobalUtil.isEmpty(billCalculationLineList)) {
+            billCalculationLineList.sort(Comparator.comparing(BillCalculationLineInterface::getHead).thenComparingLong(calc -> Long.valueOf(calc.getStartSlab())));
             final List<BillCalculationInformation> billCalculationInformationList = new ArrayList<>();
             for (int index = 0; index < billCalculationLineList.size(); index++) {
                 BillCalculationLineInterface billCalculationLine = billCalculationLineList.get(index);
@@ -473,7 +464,7 @@ public class BillNgbTemplateService {
 
     //Set Vigilance Information
     private void setVigilanceInformation(final BillTemplate templateData, final List<ConsumerPanchnamaInformationInterface> consumerPanchnamaInformationList) {
-        if (templateData == null || GlobalUtility.isEmpty(consumerPanchnamaInformationList)) return;
+        if (templateData == null || GlobalUtil.isEmpty(consumerPanchnamaInformationList)) return;
 
         List<VigilanceInformation> vigilanceInformationList = new ArrayList<>();
         for (int index = 0; index < consumerPanchnamaInformationList.size(); index++) {
@@ -521,13 +512,13 @@ public class BillNgbTemplateService {
             employeeNo = employeeConnectionMapping.getEmployeeNo();
         }
         final ConsumerInformation consumerInformation = new ConsumerInformation((String) consumerInformationObj[0], (String) consumerInformationObj[1], (String) consumerInformationObj[3],
-                (String) consumerInformationObj[2], (String) consumerInformationObj[4], GlobalUtility.maskMobileNO((String) consumerInformationObj[5]), GlobalUtility.maskEmailId((String) consumerInformationObj[6]), GlobalUtility.genericMask(employeeNo), (String) consumerInformationObj[11]);
+                (String) consumerInformationObj[2], (String) consumerInformationObj[4], GlobalUtil.maskMobileNO((String) consumerInformationObj[5]), GlobalUtil.maskEmailId((String) consumerInformationObj[6]), GlobalUtil.genericMask(employeeNo), (String) consumerInformationObj[11]);
         templateData.setConsumerInformation(consumerInformation);
 
         final ZoneInterface zone = zoneService.getByCode(locationCode);
         final DivisionInterface division = divisionService.getById(zone.getDivisionId());
         final Object[] consumerConnectionInformationObj = consumerConnectionInformationService.getForBillTemplateByConsumerNo(consumerNo);
-        final String connectionDate = GlobalUtility.getDateInStringFromDate((LocalDate) consumerConnectionInformationObj[10], GlobalUtility.EXPORT_DATE_FORMAT);
+        final LocalDate connectionDate = (LocalDate) consumerConnectionInformationObj[10];
 
         final ConnectionInformation connectionInformation = new ConnectionInformation(division.getName(), zone.getName(), locationCode, (String) consumerInformationObj[9], (String) consumerInformationObj[10],
                 (String) consumerConnectionInformationObj[14], (String) consumerConnectionInformationObj[13], (String) consumerConnectionInformationObj[12], (String) consumerConnectionInformationObj[11],
@@ -556,12 +547,12 @@ public class BillNgbTemplateService {
         if (prepaidMiscellaneous != null) {
             connectionInformation.setPrepaid(GlobalConstant.YES_ABBREVIATION.equals(prepaidMiscellaneous.getPropertyValue()));
             if (connectionInformation.isPrepaid())
-                connectionInformation.setPrepaidDate(GlobalUtility.getDateInStringFromDate(prepaidMiscellaneous.getEffectiveStartDate(), GlobalUtility.EXPORT_DATE_FORMAT));
+                connectionInformation.setPrepaidDate(prepaidMiscellaneous.getEffectiveStartDate());
         }
 
         templateData.setConnectionInformation(connectionInformation);
 
-        final MeterReaderInformationInterface meterReaderInformation = meterReaderInformationService.getByReadingDiaryNoId(Long.valueOf(templateData.getConnectionInformation().getReadingDiaryNo()));
+        final MeterReaderInformationInterface meterReaderInformation = meterReaderInformationService.getByReadingDiaryNoId(Long.parseLong(templateData.getConnectionInformation().getReadingDiaryNo()));
         if (meterReaderInformation != null) {
             templateData.getBillSummary().setMeterReaderName(meterReaderInformation.getName());
             templateData.getBillSummary().setMeterReaderContactNo(meterReaderInformation.getMobileNo());
@@ -634,10 +625,10 @@ public class BillNgbTemplateService {
                         final String firstMonth = adjustmentList.getFirst().getPostingBillMonth();
                         final String lastMonth = adjustmentList.get(installmentCount - 1).getPostingBillMonth();
                         final long pendingInstallmentCount = adjustmentList.stream().filter(a -> !a.isPosted()).count();
-                        final BigDecimal totalPendingInstallmentAmount = adjustmentList.stream().filter(a -> !a.isPosted()).map(AdjustmentInterface::getAmount).reduce(GlobalUtility::add).orElse(BigDecimal.ZERO);
+                        final BigDecimal totalPendingInstallmentAmount = adjustmentList.stream().filter(a -> !a.isPosted()).map(AdjustmentInterface::getAmount).reduce(GlobalUtil::add).orElse(BigDecimal.ZERO);
 
                         argList.add(otsType);
-                        argList.add(GlobalUtility.getDateInStringFromDate(tagDate, GlobalUtility.EXPORT_DATE_FORMAT));
+                        argList.add(tagDate);
                         argList.add(String.valueOf(installmentCount));
                         argList.add(installmentAmount.toPlainString());
                         argList.add(firstMonth);
@@ -694,13 +685,13 @@ public class BillNgbTemplateService {
         boolean isEligibleForTOD = false;
         final boolean isNetMeter = templateData.getConnectionInformation().isNetMeter();
         final ReadInformation readInformation = new ReadInformation();
-        final Sort sort = GlobalUtility.getSortObject(SortOrder.DESC);
+        final Sort sort = GlobalUtil.getSortObject(SortOrder.DESC);
         final List<ReadMasterInterface> readMasterList = readMasterService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(consumerNo, billMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, true, sort);
         if (readMasterList != null && readMasterList.size() == 1) {
             ReadMasterInterface readMaster = readMasterList.getFirst();
             readInformation.setType(readMaster.getReadingType());
             readInformation.setMeterSrNo(readMaster.getMeterIdentifier());
-            readInformation.setDate(GlobalUtility.getDateInStringFromDate(readMaster.getReadingDate(), GlobalUtility.EXPORT_DATE_FORMAT));
+            readInformation.setDate(readMaster.getReadingDate());
             readInformation.setSource(readMaster.getSource());
 
             readInformation.addRead(0, "IMPORT", readMaster.getReading(), templateData.getBillInformation().getPreviousRead(),
@@ -736,19 +727,19 @@ public class BillNgbTemplateService {
             readInformation.setChild(connectionInformation.isNetMeterChild());
 
             //Export Read Detail
-            final String previousBillMonth = GlobalUtility.getPreviousMonth(billMonth);
+            final String previousBillMonth = GlobalUtil.getPreviousMonth(billMonth);
             final List<ReadMasterExportInterface> readMasterExportList = readMasterExportService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(consumerNo, billMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, true, sort);
             long readMasterExportId = 0L;
             long previousReadMasterExportId = 0L;
-            if (!GlobalUtility.isEmpty(readMasterExportList) && readMasterExportList.size() == 1) {
+            if (!GlobalUtil.isEmpty(readMasterExportList) && readMasterExportList.size() == 1) {
                 final ReadMasterExportInterface readMasterExport = readMasterExportList.getFirst();
                 readMasterExportId = readMasterExport.getId();
                 BigDecimal readMasterExportPreviousRead = null;
                 List<ReadMasterExportInterface> previousReadMasterExportList = readMasterExportService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(consumerNo, previousBillMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, true, sort);
-                if (GlobalUtility.isEmpty(previousReadMasterExportList)) {
+                if (GlobalUtil.isEmpty(previousReadMasterExportList)) {
                     previousReadMasterExportList = readMasterExportService.getByConsumerNoAndReplacementFlagAndUsedOnBill(consumerNo, ReadMasterInterface.REPLACEMENT_FLAG_NEW_CONNECTION, true, sort);
                 }
-                if (!GlobalUtility.isEmpty(previousReadMasterExportList) && previousReadMasterExportList.size() == 1) {
+                if (!GlobalUtil.isEmpty(previousReadMasterExportList) && previousReadMasterExportList.size() == 1) {
                     readMasterExportPreviousRead = previousReadMasterExportList.getFirst().getReading();
                     previousReadMasterExportId = previousReadMasterExportList.getFirst().getId();
                 }
@@ -811,26 +802,28 @@ public class BillNgbTemplateService {
             //VNM GNM Child Detail
             if (connectionInformation.isNetMeterParent()) {
                 final List<NetMeteringArrangementInterface> netMetereteringChildList = netMeteringArrangementService.getNonParentByParentConsumerNoAndBillMonthBetween(consumerNo, billMonth);
-                if (!GlobalUtility.isEmpty(netMetereteringChildList)) {
+                if (!GlobalUtil.isEmpty(netMetereteringChildList)) {
                     final List<NetMeterChildInformation> netMeterChildInformationList = new ArrayList<>();
                     for (int index = 0; index < netMetereteringChildList.size(); index++) {
                         final NetMeteringArrangementInterface netMeteringArrangement = netMetereteringChildList.get(index);
                         final List<ReadMasterExportInterface> childReadMasterExportList = readMasterExportService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(netMeteringArrangement.getConsumerNo(), billMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, true, sort);
-                        if (!GlobalUtility.isEmpty(childReadMasterExportList) && childReadMasterExportList.size() == 1) {
+                        if (!GlobalUtil.isEmpty(childReadMasterExportList) && childReadMasterExportList.size() == 1) {
                             ReadMasterExportInterface readMasterExport = childReadMasterExportList.getFirst();
-                            ReadMasterExportInterface previousReadMasterExport = null;
+                            BigDecimal previousReadMasterExportRead = null;
                             List<ReadMasterExportInterface> previousReadMasterExportList = readMasterExportService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(netMeteringArrangement.getConsumerNo(), previousBillMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, true, sort);
-                            if (GlobalUtility.isEmpty(previousReadMasterExportList)) {
+                            if (GlobalUtil.isEmpty(previousReadMasterExportList)) {
                                 previousReadMasterExportList = readMasterExportService.getByConsumerNoAndReplacementFlagAndUsedOnBill(netMeteringArrangement.getConsumerNo(), ReadMasterInterface.REPLACEMENT_FLAG_NEW_CONNECTION, true, sort);
                             }
-                            if (!GlobalUtility.isEmpty(previousReadMasterExportList) && previousReadMasterExportList.size() == 1) {
-                                previousReadMasterExport = previousReadMasterExportList.getFirst();
+                            if (!GlobalUtil.isEmpty(previousReadMasterExportList) && previousReadMasterExportList.size() == 1) {
+                                final ReadMasterExportInterface previousReadMasterExport = previousReadMasterExportList.getFirst();
+                                previousReadMasterExportRead = previousReadMasterExport.getReading();
                             }
 
                             netMeterChildInformationList.add(new NetMeterChildInformation(index + 1, consumerNo, netMeteringArrangement.getRatio(), readMasterExport.getReading(),
-                                    previousReadMasterExport.getReading(), readMasterExport.getMf(), readMasterExport.getConsumption(), readMasterExport.getAssessment(), readMasterExport.getTotalConsumption()));
+                                    previousReadMasterExportRead, readMasterExport.getMf(), readMasterExport.getConsumption(), readMasterExport.getAssessment(), readMasterExport.getTotalConsumption()));
                         }
                     }
+                    templateData.setNetMeterChildInformationList(netMeterChildInformationList);
                 }
             }
         }
@@ -849,7 +842,7 @@ public class BillNgbTemplateService {
             isEligibleForTOD = true;
         } else if (ConsumerConnectionInformationInterface.TARIFF_CATEGORIES_LV2_4.contains(connectionInformation.getTariffCategory()) && connectionInformation.getContractDemand() != null) {
             final BigDecimal contractDemandInKW = ConsumerConnectionInformationInterface.LOAD_UNIT_KW.equals(connectionInformation.getContractDemandUnit()) ? connectionInformation.getContractDemand()
-                    : GlobalUtility.convertHPToKW(connectionInformation.getContractDemand()).setScale(0, RoundingMode.HALF_UP);
+                    : GlobalUtil.convertHPToKW(connectionInformation.getContractDemand()).setScale(0, RoundingMode.HALF_UP);
             if (contractDemandInKW != null && contractDemandInKW.compareTo(BigDecimal.TEN) > 0) {
                 isEligibleForTOD = true;
             }
@@ -868,10 +861,10 @@ public class BillNgbTemplateService {
             final TODInformation todInformation = new TODInformation();
             if (isNetMeter) {
                 long previousReadMasterId = 0L;
-                final Sort sort = GlobalUtility.getSortObject(SortOrder.DESC);
-                final String previousBillMonth = GlobalUtility.getPreviousMonth(templateData.getBillSummary().getBillMonth());
+                final Sort sort = GlobalUtil.getSortObject(SortOrder.DESC);
+                final String previousBillMonth = GlobalUtil.getPreviousMonth(templateData.getBillSummary().getBillMonth());
                 final List<ReadMasterInterface> previousReadMasterList = readMasterService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(templateData.getConsumerInformation().getConsumerNo(), previousBillMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, ReadMasterInterface.USED_ON_BILL, sort);
-                if (!GlobalUtility.isEmpty(previousReadMasterList)) {
+                if (!GlobalUtil.isEmpty(previousReadMasterList)) {
                     final ReadMasterInterface previousReadMaster = previousReadMasterList.getFirst();
                     previousReadMasterId = previousReadMaster.getId();
                 }
@@ -889,16 +882,19 @@ public class BillNgbTemplateService {
 
                 todInformation.setTodNetMeterDetailList(todNetMeterDetailList);
             } else {
-                todInformation.setTotalUnit(GlobalUtility.add(readMasterTOD.getTod1TotalConsumption(), readMasterTOD.getTod2TotalConsumption(), readMasterTOD.getTod3TotalConsumption(), readMasterTOD.getTod4TotalConsumption()));
-                todInformation.setTotalAmount(GlobalUtility.add(billTOD.getTod1(), billTOD.getTod2(), billTOD.getTod3(), billTOD.getTod4()));
+                todInformation.setTotalUnit(GlobalUtil.add(readMasterTOD.getTod1TotalConsumption(), readMasterTOD.getTod2TotalConsumption(), readMasterTOD.getTod3TotalConsumption(), readMasterTOD.getTod4TotalConsumption()));
+                todInformation.setTotalAmount(GlobalUtil.add(billTOD.getTod1(), billTOD.getTod2(), billTOD.getTod3(), billTOD.getTod4()));
                 final List<TODDetail> todDetailList = new ArrayList<>();
                 todDetailList.add(new TODDetail(0, ReadMasterTODInterface.TOD1, "Peak", "10 PM to 6 AM", readMasterTOD.getTod1TotalConsumption(), billTOD.getTod1()));
                 todDetailList.add(new TODDetail(1, ReadMasterTODInterface.TOD2, "Peak", "6 AM to 9 AM", readMasterTOD.getTod2TotalConsumption(), billTOD.getTod2()));
                 todDetailList.add(new TODDetail(2, ReadMasterTODInterface.TOD3, "Off Peak", "9 AM to 5 PM", readMasterTOD.getTod3TotalConsumption(), billTOD.getTod3()));
                 todDetailList.add(new TODDetail(3, ReadMasterTODInterface.TOD4, "Peak", "5 PM to  10 PM", readMasterTOD.getTod4TotalConsumption(), billTOD.getTod4()));
 
-                final Map<String, BigDecimal> pieChartMap = Map.of(ReadMasterTODInterface.TOD1, readMasterTOD.getTod1TotalConsumption(), ReadMasterTODInterface.TOD2, readMasterTOD.getTod2TotalConsumption(),
-                        ReadMasterTODInterface.TOD3, readMasterTOD.getTod3TotalConsumption(), ReadMasterTODInterface.TOD4, readMasterTOD.getTod4TotalConsumption());
+                Map<String, BigDecimal> pieChartMap = new TreeMap<>(
+                        Map.of(ReadMasterTODInterface.TOD1, readMasterTOD.getTod1TotalConsumption().setScale(2, RoundingMode.HALF_UP),
+                                ReadMasterTODInterface.TOD2, readMasterTOD.getTod2TotalConsumption().setScale(2, RoundingMode.HALF_UP),
+                                ReadMasterTODInterface.TOD3, readMasterTOD.getTod3TotalConsumption().setScale(2, RoundingMode.HALF_UP),
+                                ReadMasterTODInterface.TOD4, readMasterTOD.getTod4TotalConsumption().setScale(2, RoundingMode.HALF_UP)));
                 todInformation.setTodPieChartBase64Image(xChartService.getPieChartBase64Image(pieChartMap, 350, 172));
 
                 todInformation.setTodDetailList(todDetailList);
@@ -915,12 +911,12 @@ public class BillNgbTemplateService {
         final boolean isNetMeter = templateData.getConnectionInformation().isNetMeter();
 
         final List<ConsumerMeterMappingInterface> meterMappingList = consumerMeterMappingService.getByConsumerNoAndBillMonthOrderByInstallationDateDescIdDesc(consumerNo, billMonth);
-        if (GlobalUtility.isEmpty(meterMappingList)) return;
+        if (GlobalUtil.isEmpty(meterMappingList)) return;
 
         final MeterReplacementInformation meterReplacementInformation = new MeterReplacementInformation();
 
         if (isNetMeter) {
-            final Sort sort = GlobalUtility.getSortObject(SortOrder.DESC);
+            final Sort sort = GlobalUtil.getSortObject(SortOrder.DESC);
             final List<NetMeterReplacementDetail> meterReplacementDetailList = new ArrayList<>();
             final BillSummary billSummary = templateData.getBillSummary();
             final BillInformation billInformation = templateData.getBillInformation();
@@ -934,7 +930,7 @@ public class BillNgbTemplateService {
                 BigDecimal exportConsumption = null;
                 BigDecimal netConsumption = null;
                 final List<ReadMasterExportInterface> readMasterExportList = readMasterExportService.getByConsumerNoAndBillMonthAndMeterIdentifier(consumerNo, billMonth, meterMapping.getMeterIdentifier(), sort);
-                if (!GlobalUtility.isEmpty(readMasterExportList)) {
+                if (!GlobalUtil.isEmpty(readMasterExportList)) {
                     for (ReadMasterExportInterface readMasterExport : readMasterExportList) {
                         if (ReadMasterInterface.REPLACEMENT_FLAG_START_READ.equals(readMasterExport.getReplacementFlag())
                                 || ReadMasterInterface.REPLACEMENT_FLAG_NEW_CONNECTION.equals(readMasterExport.getReplacementFlag())) {
@@ -951,7 +947,7 @@ public class BillNgbTemplateService {
                     }
                 }
 
-                meterReplacementDetailList.add(new NetMeterReplacementDetail(index + 1, meterMapping.getMeterIdentifier(), GlobalUtility.getDateInStringFromDate(meterMapping.getRemovalDate(), GlobalUtility.EXPORT_DATE_FORMAT), meterMapping.getStartRead()
+                meterReplacementDetailList.add(new NetMeterReplacementDetail(index + 1, meterMapping.getMeterIdentifier(), meterMapping.getRemovalDate(), meterMapping.getStartRead()
                         , finalRead, importConsumption, exportStartRead, exportFinalRead, exportConsumption, netConsumption));
                 meterReplacementInformation.setNetMeterReplacementDetailList(meterReplacementDetailList);
             }
@@ -965,7 +961,7 @@ public class BillNgbTemplateService {
                 if (finalRead == null) finalRead = billInformation.getCurrentRead();
 
                 final BigDecimal proratedBillAmount = billSummary.getCurrentBill().subtract(billInformation.getSurchargeDemanded()).divide(billSummary.getConsumption(), 3, RoundingMode.HALF_UP).multiply(finalRead.subtract(meterMapping.getStartRead()));
-                meterReplacementDetailList.add(new MeterReplacementDetail(index + 1, meterMapping.getMeterIdentifier(), GlobalUtility.getDateInStringFromDate(meterMapping.getRemovalDate(), GlobalUtility.EXPORT_DATE_FORMAT), meterMapping.getStartRead()
+                meterReplacementDetailList.add(new MeterReplacementDetail(index + 1, meterMapping.getMeterIdentifier(), meterMapping.getRemovalDate(), meterMapping.getStartRead()
                         , finalRead, finalRead.subtract(meterMapping.getStartRead()), proratedBillAmount.setScale(3, RoundingMode.HALF_UP)));
                 meterReplacementInformation.setMeterReplacementDetailList(meterReplacementDetailList);
             }
@@ -992,7 +988,7 @@ public class BillNgbTemplateService {
         }
 
         final List<URL> imageUrlList = resourceService.getImageFromDirectoryExcept(ResourceService.IMAGE_TYPE_BILL_ADVERTISEMENT, ResourceService.IMAGE_EXTENSION_JPEG, Arrays.asList("zero.jpeg", "one.jpeg"));
-        if (!GlobalUtility.isEmpty(imageUrlList)) {
+        if (!GlobalUtil.isEmpty(imageUrlList)) {
             final List<String> lastPageBase64ImageList = new ArrayList<>();
             for (URL url : imageUrlList) {
                 String base64Ad = resourceService.convertImageToBase64(url);
@@ -1001,7 +997,7 @@ public class BillNgbTemplateService {
                     lastPageBase64ImageList.add(base64Ad);
                 }
             }
-            if (!GlobalUtility.isEmpty(lastPageBase64ImageList))
+            if (!GlobalUtil.isEmpty(lastPageBase64ImageList))
                 advertisementInformation.setLastPageBase64Image(lastPageBase64ImageList);
         }
 

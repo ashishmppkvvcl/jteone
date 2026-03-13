@@ -2,7 +2,7 @@ package com.mppkvvcl.jteone.service.daos.mis;
 
 import com.mppkvvcl.jteone.service.process.ResourceService;
 import com.mppkvvcl.jteone.utility.GlobalConstant;
-import com.mppkvvcl.jteone.utility.GlobalUtility;
+import com.mppkvvcl.jteone.utility.GlobalUtil;
 import com.mppkvvcl.misdao.daos.DiscomDAO;
 import com.mppkvvcl.misdao.interfaces.DiscomInterface;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class DiscomService {
         if (discom != null) return discom;
 
         final List<? extends DiscomInterface> discomList = getAll();
-        if (!GlobalUtility.isEmpty(discomList)) discom = discomList.getFirst();
+        if (!GlobalUtil.isEmpty(discomList)) discom = discomList.getFirst();
 
         return discom;
     }
@@ -52,9 +52,9 @@ public class DiscomService {
         final DiscomInterface discom = get();
         if (discom == null) return null;
         if (imageExtension == null)
-            imageExtension = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.IMAGE_EXTENSION_SVG : ResourceService.IMAGE_EXTENSION_PNG;
+            imageExtension = (GlobalConstant.DISCOM_MPWZ.equalsIgnoreCase(discom.getShortName())) ? ResourceService.IMAGE_EXTENSION_SVG : ResourceService.IMAGE_EXTENSION_PNG;
         if (imageHtmlPrefix == null)
-            imageHtmlPrefix = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.SVG_HTML_BASE54_PREFIX : ResourceService.PNG_HTML_BASE54_PREFIX;
+            imageHtmlPrefix = (GlobalConstant.DISCOM_MPWZ.equalsIgnoreCase(discom.getShortName())) ? ResourceService.SVG_HTML_BASE54_PREFIX : ResourceService.PNG_HTML_BASE54_PREFIX;
 
         discomLogoAsBase64 = imageHtmlPrefix + resourceService.convertImageToBase64(resourceService.getImage(discom.getShortName().toLowerCase() + "." + imageExtension, ResourceService.IMAGE_TYPE_LOGO));
         return discomLogoAsBase64;
@@ -66,9 +66,9 @@ public class DiscomService {
         final DiscomInterface discom = get();
         if (discom == null) return null;
         if (imageExtension == null)
-            imageExtension = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.IMAGE_EXTENSION_SVG : ResourceService.IMAGE_EXTENSION_PNG;
+            imageExtension = (GlobalConstant.DISCOM_MPWZ.equalsIgnoreCase(discom.getShortName())) ? ResourceService.IMAGE_EXTENSION_SVG : ResourceService.IMAGE_EXTENSION_PNG;
         if (imageHtmlPrefix == null)
-            imageHtmlPrefix = (GlobalConstant.DISCOM_MPWZ.equals(discom.getShortName().toLowerCase())) ? ResourceService.SVG_HTML_BASE54_PREFIX : ResourceService.PNG_HTML_BASE54_PREFIX;
+            imageHtmlPrefix = (GlobalConstant.DISCOM_MPWZ.equalsIgnoreCase(discom.getShortName())) ? ResourceService.SVG_HTML_BASE54_PREFIX : ResourceService.PNG_HTML_BASE54_PREFIX;
 
         mpstateLogoAsBase64 = imageHtmlPrefix + resourceService.convertImageToBase64(resourceService.getImage("state_mp." + imageExtension, ResourceService.IMAGE_TYPE_LOGO));
         return mpstateLogoAsBase64;

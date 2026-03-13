@@ -1,4 +1,20 @@
+@import java.math.BigDecimal
+@import com.mppkvvcl.jteone.utility.GlobalUtil
+@import com.mppkvvcl.jteone.utility.JteUtil
+
 @param com.mppkvvcl.jteone.dtos.templates.BillTemplate billTemplate
+
+!{
+    var companyInfo = billTemplate.getCompanyInformation();
+    var billSummary = billTemplate.getBillSummary();
+    var billInfo = billTemplate.getBillInformation();
+    var consumerInfo = billTemplate.getConsumerInformation();
+    var connectionInfo = billTemplate.getConnectionInformation();
+    var readInfo = billTemplate.getReadInformation();
+    var todInfo = billTemplate.getTodInformation();
+    var meterReplacementInfo = billTemplate.getMeterReplacementInformation();
+    var adInfo = billTemplate.getAdvertisementInformation();
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,7 +22,6 @@
     <meta charset="UTF-8"/>
     <title>WZ Electricity Bill</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
     <style>
         @page { size: A4; margin: 8mm; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -387,42 +402,42 @@
     <div class="header-top">
         <div class="header-left">
             <div class="header-cell left">
-                <img src="${billTemplate.getCompanyInformation().getLogoBase64()}" alt=""
-                     style="width:60px; height:60px;">
+                <img src="${companyInfo.getLogoBase64()}" alt=""
+                     style="width:60px; height:60px;"/>
             </div>
             <div class="header-cell">
                 <div class="company-info">
                     <div class="company-title">
-                        <strong>${billTemplate.getCompanyInformation().getFullName()}</strong>
+                        <strong>${companyInfo.getFullName()}</strong>
                     </div>
-                    <div class="company-subtitle">${billTemplate.getCompanyInformation().getAddress()}</div>
+                    <div class="company-subtitle">${companyInfo.getAddress()}</div>
                     <div class="company-subtitle">(Wholly owned by Govt. of M.P.)</div>
                     <div class="tagline">
-                        <a href="${billTemplate.getCompanyInformation().getWebsite()}"
-                           target="_blank">Website: ${billTemplate.getCompanyInformation().getWebsite()}</a> |
-                        <a href="tel:${billTemplate.getCompanyInformation().getCustomerCareNumber()}">Call Centre
-                            No. ${billTemplate.getCompanyInformation().getCustomerCareNumber()}</a>
+                        <a href="${companyInfo.getWebsite()}"
+                           target="_blank">Website: ${companyInfo.getWebsite()}</a> |
+                        <a href="tel:${companyInfo.getCustomerCareNumber()}">Call Centre
+                            No. ${companyInfo.getCustomerCareNumber()}</a>
                     </div>
                     <div class="tagline">
-                        GST No: <strong>${billTemplate.getCompanyInformation().getGstNo()}</strong> |
-                        CIN No: <strong>${billTemplate.getCompanyInformation().getCiNo()}</strong>
+                        GST No: <strong>${companyInfo.getGstNo()}</strong> |
+                        CIN No: <strong>${companyInfo.getCiNo()}</strong>
                     </div>
                 </div>
             </div>
 
             <div class="header-cell right">
-                <img src="${billTemplate.getCompanyInformation().getAlternateLogoBase64()}" alt=""
-                     style="width:60px; height:60px;">
+                <img src="${companyInfo.getAlternateLogoBase64()}" alt=""
+                     style="width:60px; height:60px;"/>
             </div>
         </div>
     </div>
 
     <div class="page-header box" style="padding: 5px; margin-bottom: -5px;">
         <div class="page-header-bill-no">
-            Electricity Bill No: ${billTemplate.getBillSummary().getBillNo()}
+            Electricity Bill No: ${billSummary.getBillNo()}
         </div>
         <div class="page-header-month">
-            BILL MONTH: ${billTemplate.getBillSummary().getBillMonth()}
+            BILL MONTH: ${billSummary.getBillMonth()}
         </div>
     </div>
     <!-- Top Banner + Consumer -->
@@ -432,30 +447,30 @@
             <tr>
                 <td style="width:25%;">
                     <span class="lbl">CONSUMER NO</span>
-                    <span class="val">N${billTemplate.getConsumerInformation().getConsumerNo()}</span>
+                    <span class="val">N${consumerInfo.getConsumerNo()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">MOBILE</span>
-                    <span class="val">${billTemplate.getConsumerInformation().getMobileNo()}</span>
+                    <span class="val">${consumerInfo.getMobileNo()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">EMAIL</span>
-                    <span class="val">${billTemplate.getConsumerInformation().getEmailId()}</span>
+                    <span class="val">${consumerInfo.getEmailId()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">EMPLOYEE NO</span>
-                    <span class="val">${billTemplate.getConsumerInformation().getEmployeeNo()}</span>
+                    <span class="val">${consumerInfo.getEmployeeNo()}</span>
                 </td>
             </tr>
             <!-- Name & Address -->
             <tr>
                 <td colspan="2">
                     <span class="lbl">CONSUMER NAME</span>
-                    <span class="val">${billTemplate.getConsumerInformation().getConsumerName()}</span>
+                    <span class="val">${consumerInfo.getConsumerName()}</span>
                 </td>
                 <td colspan="2">
                     <span class="lbl">ADDRESS</span>
-                    <span class="val">${billTemplate.getConsumerInformation().getAddress()}</span>
+                    <span class="val">${consumerInfo.getAddress()}</span>
                 </td>
             </tr>
         </table>
@@ -466,78 +481,78 @@
             <tr>
                 <td style="width:25%;">
                     <span class="lbl">DIVISION NAME</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getDivisionName()}</span>
+                    <span class="val">${connectionInfo.getDivisionName()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">ZONE / DC NAME</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getLocationCode()} - ${billTemplate.getConnectionInformation().getZoneName()}</span>
+                    <span class="val">${connectionInfo.getLocationCode()} - ${connectionInfo.getZoneName()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">GROUP / RD NO</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getGroupNo()} - ${billTemplate.getConnectionInformation().getReadingDiaryNo()}</span>
+                    <span class="val">${connectionInfo.getGroupNo()} - ${connectionInfo.getReadingDiaryNo()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">CONNECTION TYPE</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getConnectionType()}</span>
+                    <span class="val">${connectionInfo.getConnectionType()}</span>
                 </td>
             </tr>
             <tr>
                 <td style="width:25%;">
                     <span class="lbl"> Feeder Code</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getFeederCode()}</span>
+                    <span class="val">${connectionInfo.getFeederCode()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">DTR  Code</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getDtrCode()}</span>
+                    <span class="val">${connectionInfo.getDtrCode()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl"> Pole No</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getPoleNo()}</span>
+                    <span class="val">${connectionInfo.getPoleNo()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">Purpose</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getPurpose()}</span>
+                    <span class="val">${connectionInfo.getPurpose()}</span>
                 </td>
             </tr>
             <tr>
                 <td style="width:25%;">
                     <span class="lbl">Premise Type</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getAreaType()}</span>
+                    <span class="val">${connectionInfo.getAreaType()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">TARIFF CATEGORY</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getTariffCategory()} (${billTemplate.getConnectionInformation().getTariffCode()})</span>
+                    <span class="val">${connectionInfo.getTariffCategory()} (${connectionInfo.getTariffCode()})</span>
                 </td>
                 <td style="width:25%;">
-                    @if("ACTIVE".equals(billTemplate.getConsumerInformation().getStatus()))
+                    @if("ACTIVE".equals(consumerInfo.getStatus()))
                         <span class="lbl">CONNECTION DATE</span>
-                        <span class="val">${billTemplate.getConnectionInformation().getConnectionDate()}</span>
+                        <span class="val">${JteUtil.get(connectionInfo.getConnectionDate())}</span>
                     @else
                         <span class="lbl">PD DATE</span>
-                        <span class="val">${billTemplate.getBillSummary().getPdcDate()}</span>
+                        <span class="val">${JteUtil.get(billSummary.getPdcDate())}</span>
                     @endif
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">PHASE</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getPhase()}</span>
+                    <span class="val">${connectionInfo.getPhase()}</span>
                 </td>
             </tr>
             <tr>
                 <td style="width:25%;">
                     <span class="lbl">SANCTIONED LOAD</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getSanctionedLoad()} ${billTemplate.getConnectionInformation().getSanctionedLoadUnit()}</span>
+                    <span class="val">${JteUtil.get(connectionInfo.getSanctionedLoad())} ${connectionInfo.getSanctionedLoadUnit()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">Contract Demand</span>
-                    <span class="val">${billTemplate.getConnectionInformation().getContractDemand()} ${billTemplate.getConnectionInformation().getContractDemandUnit()}</span>
+                    <span class="val">${JteUtil.get(connectionInfo.getContractDemand())} ${connectionInfo.getContractDemandUnit()}</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">Net Meter</span>
-                    <span class="val">@if(billTemplate.getConnectionInformation().isNetMeter()) Yes @else No @endif</span>
+                    <span class="val">@if(connectionInfo.isNetMeter()) Yes @else No @endif</span>
                 </td>
                 <td style="width:25%;">
                     <span class="lbl">Prepaid</span>
-                    <span class="val">@if(billTemplate.getConnectionInformation().isPrepaid()) Yes (${billTemplate.getConnectionInformation().getPrepaidDate()}) @else No @endif</span>
+                    <span class="val">@if(connectionInfo.isPrepaid()) Yes (${JteUtil.get(connectionInfo.getPrepaidDate())}) @else No @endif</span>
                 </td>
             </tr>
         </table>
@@ -552,14 +567,14 @@
             <th style="width:18%;">Pay After Due Date</th>
         </tr>
         <tr>
-            <td class="center" style="font-size: 15px;"><b>${billTemplate.getBillSummary().getDueDate()}</b></td>
-            <td class="center" style="font-size: 15px;"><b>${billTemplate.getBillSummary().getConsumption()}</b></td>
-            <td class="center" style="font-size: 15px;"><b>₹ ${billTemplate.getBillSummary().getCurrentBill()}</b></td>
-            <td class="center" style="font-size: 15px;"><b>₹ ${billTemplate.getBillSummary().getArrear()}</b></td>
-            <td class="center" style="font-size: 15px;">
-                <b>₹ ${billTemplate.getBillSummary().getPayableTillDueDate()}</b></td>
-            <td class="center" style="font-size: 15px;">
-                <b>₹ ${billTemplate.getBillSummary().getPayableAfterDueDate()}</b></td>
+            <td class="center" style="font-size: 15px;"><b>${JteUtil.get(billSummary.getDueDate())}</b></td>
+            <td class="center" style="font-size: 15px;"><b>${JteUtil.get(billSummary.getConsumption())}</b></td>
+            <td class="center" style="font-size: 15px;"><b>₹ ${JteUtil.get(billSummary.getCurrentBill())}</b></td>
+            <td class="center" style="font-size: 15px;"><b>₹ ${JteUtil.get(billSummary.getArrear())}</b></td>
+            <td class="center" style="font-size: 15px;"><b>₹ ${JteUtil.get(billSummary.getPayableTillDueDate())}</b>
+            </td>
+            <td class="center" style="font-size: 15px;"><b>₹ ${JteUtil.get(billSummary.getPayableAfterDueDate())}</b>
+            </td>
         </tr>
     </table>
     <!-- Payment + summary row -->
@@ -567,8 +582,8 @@
         <div class="c1" style="text-align: center;">
             <div class="box"><strong><span style="font-size:11px;">Scan to Pay</span></strong>
                 <div>
-                    <img src="${billTemplate.getBillSummary().getPaymentQuickResponseBase64()}"
-                         style="height: 54px; width: 54px;" alt="">
+                    <img src="${billSummary.getPaymentQuickResponseBase64()}"
+                         style="height: 54px; width: 54px;" alt=""/>
                 </div>
             </div>
         </div>
@@ -581,19 +596,19 @@
                     <tr>
                         <td style="width:25%;">
                             <span class="lbl">BILL DATE</span>
-                            <span class="val">${billTemplate.getBillSummary().getBillDate()}</span>
+                            <span class="val">${JteUtil.get(billSummary.getBillDate())}</span>
                         </td>
                         <td style="width:25%;">
                             <span class="lbl">BILL TYPE</span>
-                            <span class="val">${billTemplate.getBillSummary().getBillType()}</span>
+                            <span class="val">${billSummary.getBillType()}</span>
                         </td>
                         <td style="width:25%;">
                             <span class="lbl">METER READER</span>
-                            <span class="val">${billTemplate.getBillSummary().getMeterReaderName()}</span>
+                            <span class="val">${billSummary.getMeterReaderName()}</span>
                         </td>
                         <td style="width:25%;">
                             <span class="lbl">BILL BASIS</span>
-                            <span class="val">${billTemplate.getBillSummary().getBillBasis()}</span>
+                            <span class="val">${billSummary.getBillBasis()}</span>
                         </td>
                     </tr>
 
@@ -601,19 +616,19 @@
                     <tr>
                         <td>
                             <span class="lbl">DAILY AVG OF BILL</span>
-                            <span class="val">${billTemplate.getBillSummary().getDailyAverageBill()}</span>
+                            <span class="val">${JteUtil.get(billSummary.getDailyAverageBill())}</span>
                         </td>
                         <td>
                             <span class="lbl">DAILY AVG UNITS</span>
-                            <span class="val">${billTemplate.getBillSummary().getDailyAverageConsumption()}</span>
+                            <span class="val">${JteUtil.get(billSummary.getDailyAverageConsumption())}</span>
                         </td>
                         <td>
                             <span class="lbl">S.D. HELD</span>
-                            <span class="val">${billTemplate.getBillSummary().getSdHeld()}</span>
+                            <span class="val">${JteUtil.get(billSummary.getSdHeld())}</span>
                         </td>
                         <td>
                             <span class="lbl">S.D. PENDING</span>
-                            <span class="val">${billTemplate.getBillSummary().getSdPending()}</span>
+                            <span class="val">${JteUtil.get(billSummary.getSdPending())}</span>
                         </td>
                     </tr>
                 </table>
@@ -637,10 +652,10 @@
             </td>
             <td style="text-align: center; padding: -15px;">
                 <strong><span
-                            style="font-size:11px;">WhatsApp ChatBot / Call Centre: ${billTemplate.getCompanyInformation().getCustomerCareNumber()}</span></strong>
+                            style="font-size:11px;">WhatsApp ChatBot</span></strong>
                 <div>
-                    <img src="${billTemplate.getCompanyInformation().getWhatsappQuickResponseBase64()}"
-                         style="height: 54px; width: 54px;" alt="">
+                    <img src="${companyInfo.getWhatsappQuickResponseBase64()}"
+                         style="height: 54px; width: 54px;" alt=""/>
                 </div>
             </td>
         </tr>
@@ -651,8 +666,8 @@
         <div class="band-title">CONSUMPTION TREND (IN UNITS)</div>
         <div class="chart-wrap">
             <img style="width: 100%; height: 140px;"
-                 src="${billTemplate.getBillSummary().getConsumptionTrendBarChartBase64()}" alt="" width="742"
-                 height="140">
+                 src="${billSummary.getConsumptionTrendBarChartBase64()}" alt="" width="742"
+                 height="140"/>
         </div>
     </div>
 
@@ -660,8 +675,8 @@
     <div class="mt-1">
         <div class="band-title">ADVERTISEMENT / AWARENESS</div>
         <div class="poster" style="height: 130px;">
-            <img src="${billTemplate.getAdvertisementInformation().getPageOneZeroBase64Image()}" alt=""
-                 style="height: 100%; width: 100%;">
+            <img src="${adInfo.getPageOneZeroBase64Image()}" alt=""
+                 style="height: 100%; width: 100%;"/>
         </div>
     </div>
     <div class="mt-1 box">
@@ -672,8 +687,8 @@
     </div>
 
     <div class="page-footer">
-        <div class="page-footer-left">${billTemplate.getConsumerInformation().getConsumerNo()}</div>
-        <div class="page-footer-center">${billTemplate.getBillSummary().getBillMonth()}</div>
+        <div class="page-footer-left">${consumerInfo.getConsumerNo()}</div>
+        <div class="page-footer-center">${billSummary.getBillMonth()}</div>
         <div class="page-footer-right">Page 1 of 4</div>
     </div>
 </div>
@@ -687,45 +702,45 @@
             <tr>
                 <td style="width:16.66%;">
                     <span class="lbl">METER S.NO.</span>
-                    <span class="val">${billTemplate.getReadInformation().getMeterSrNo()}</span>
+                    <span class="val">${readInfo.getMeterSrNo()}</span>
                 </td>
                 <td style="width:16.66%;">
                     <span class="lbl">READ DATE</span>
-                    <span class="val">${billTemplate.getReadInformation().getDate()}</span>
+                    <span class="val">${JteUtil.get(readInfo.getDate())}</span>
                 </td>
                 <td style="width:16.66%;">
                     <span class="lbl">READ TYPE</span>
-                    <span class="val">${billTemplate.getReadInformation().getType()}</span>
+                    <span class="val">${readInfo.getType()}</span>
                 </td>
                 <td style="width:16.66%;">
                     <span class="lbl">READ SOURCE</span>
-                    <span class="val">${billTemplate.getReadInformation().getSource()}</span>
+                    <span class="val">${readInfo.getSource()}</span>
                 </td>
                 <td style="width:16.66%;">
                     <span class="lbl">P.F</span>
-                    <span class="val">${billTemplate.getBillInformation().getPf()}</span>
+                    <span class="val">${JteUtil.get(billInfo.getPf())}</span>
                 </td>
                 <td style="width:16.66%;">
                     <span class="lbl">MD</span>
-                    <span class="val">${billTemplate.getBillInformation().getMd()}</span>
+                    <span class="val">${JteUtil.get(billInfo.getMd())}</span>
                 </td>
             </tr>
 
             <!-- Row 2 -->
-            @if(billTemplate.getConnectionInformation().isNetMeter())
+            @if(connectionInfo.isNetMeter())
                 <tr>
                     <td>
                         <span class="lbl">SOLAR PLANT CAPACITY</span>
-                        <span class="val">${billTemplate.getReadInformation().getSolarPlantCapacity()}</span>
+                        <span class="val">${JteUtil.get(readInfo.getSolarPlantCapacity())}</span>
                     </td>
                     <td>
                         <span class="lbl">CARRY FORWARD UNITS</span>
-                        <span class="val">${billTemplate.getReadInformation().getResidualUnit()}</span>
+                        <span class="val">${JteUtil.get(readInfo.getResidualUnit())}</span>
                     </td>
                     <td>
                         <span class="lbl">VNM / GNM</span>
-                        <span class="val">@if(billTemplate.getConnectionInformation().isNetMeterChild()) CHILD
-                            @elseif(billTemplate.getConnectionInformation().isNetMeterParent()) PARENT @endif
+                        <span class="val">@if(connectionInfo.isNetMeterChild()) CHILD
+                            @elseif(connectionInfo.isNetMeterParent()) PARENT @endif
                         </span>
                     </td>
                     <td></td>
@@ -737,7 +752,7 @@
     </div>
 
     <div class="box pad-6">
-        @if(billTemplate.getConnectionInformation().isNetMeter())
+        @if(connectionInfo.isNetMeter())
             <table class="reading-table">
                 <thead>
                 <tr>
@@ -751,52 +766,40 @@
                 </tr>
                 </thead>
                 <tbody>
-                !{var importRead = billTemplate.getReadInformation().getReadDetailList().getFirst();}
-                !{var exportRead = billTemplate.getReadInformation().getReadDetailList().get(1);}
+                !{var importRead = readInfo.getReadDetailList().getFirst();}
+                !{var exportRead = readInfo.getReadDetailList().get(1);}
                 <tr>
                     <td>IMPORT</td>
-                    <td class="right"><b>${importRead.getCurrentRead()}</b></td>
-                    <td class="right"><b>${importRead.getPreviousRead()}</b></td>
-                    <td class="right"><b>${importRead.getMf()}</b></td>
-                    <td class="right"><b>${importRead.getMeteredUnit()}</b></td>
-                    <td class="right"><b>${importRead.getAssessment()}</b></td>
-                    <td class="right"><b>${importRead.getBilledUnit()}</b></td>
+                    <td class="right"><b>${JteUtil.get(importRead.getCurrentRead())}</b></td>
+                    <td class="right"><b>${JteUtil.get(importRead.getPreviousRead())}</b></td>
+                    <td class="right"><b>${JteUtil.get(importRead.getMf())}</b></td>
+                    <td class="right"><b>${JteUtil.get(importRead.getMeteredUnit())}</b></td>
+                    <td class="right"><b>${JteUtil.get(importRead.getAssessment())}</b></td>
+                    <td class="right"><b>${JteUtil.get(importRead.getBilledUnit())}</b></td>
                 </tr>
                 <tr>
                     <td>EXPORT</td>
-                    <td class="right"><b>${exportRead.getCurrentRead()}</b></td>
-                    <td class="right"><b>${exportRead.getPreviousRead()}</b></td>
-                    <td class="right"><b>${exportRead.getMf()}</b></td>
-                    <td class="right"><b>${exportRead.getMeteredUnit()}</b></td>
-                    <td class="right"><b>${exportRead.getAssessment()}</b></td>
-                    <td class="right"><b>${exportRead.getBilledUnit()}</b></td>
+                    <td class="right"><b>${JteUtil.get(exportRead.getCurrentRead())}</b></td>
+                    <td class="right"><b>${JteUtil.get(exportRead.getPreviousRead())}</b></td>
+                    <td class="right"><b>${JteUtil.get(exportRead.getMf())}</b></td>
+                    <td class="right"><b>${JteUtil.get(exportRead.getMeteredUnit())}</b></td>
+                    <td class="right"><b>${JteUtil.get(exportRead.getAssessment())}</b></td>
+                    <td class="right"><b>${JteUtil.get(exportRead.getBilledUnit())}</b></td>
                 </tr>
                 <tr class="row-highlight">
                     <td colspan="4" style="text-align:center;">Residual Units Adjusted</td>
-                    <td class="right" colspan="3">${billTemplate.getReadInformation().getResidualUnitAdjusted()}</td>
+                    <td class="right" colspan="3">${JteUtil.get(readInfo.getResidualUnitAdjusted())}</td>
                 </tr>
                 <tr class="row-total">
                     <td colspan="4" style="text-align:center;">Net</td>
-                    <td class="right">${billTemplate.getReadInformation().getNetMeteredUnit()}</td>
+                    <td class="right">${JteUtil.get(readInfo.getNetMeteredUnit())}</td>
                     <td class="right"></td>
-                    <td class="right">${billTemplate.getReadInformation().getNetBilledUnit()}</td>
+                    <td class="right">${JteUtil.get(readInfo.getNetBilledUnit())}</td>
                 </tr>
-                <%--@if(billTemplate.getReadInformation().getReadDetailList().size() == 3)
-                    !{var generateRead = billTemplate.getReadInformation().getReadDetailList().get(2);}
-                    <tr>
-                        <td>GENERATE</td>
-                        <td class="right"><b>${generateRead.getCurrentRead()}</b></td>
-                        <td class="right"><b>${generateRead.getPreviousRead()}</b></td>
-                        <td class="right"><b>${generateRead.getMf()}</b></td>
-                        <td class="right"><b>${generateRead.getMeteredUnit()}</b></td>
-                        <td class="right"><b>${generateRead.getAssessment()}</b></td>
-                        <td class="right"><b>${generateRead.getBilledUnit()}</b></td>
-                    </tr>
-                @endif--%>
                 </tbody>
             </table>
         @else
-            !{var readInfo = billTemplate.getReadInformation().getReadDetailList().getFirst();}
+            !{var read = readInfo.getReadDetailList().getFirst();}
             <table class="tight">
                 <tr>
                     <th class="right">Current Reading</th>
@@ -807,12 +810,12 @@
                     <th class="right">Total Units</th>
                 </tr>
                 <tr>
-                    <td class="right"><b>${readInfo.getCurrentRead()}</b></td>
-                    <td class="right"><b>${readInfo.getPreviousRead()}</b></td>
-                    <td class="right"><b>${readInfo.getMf()}</b></td>
-                    <td class="right"><b>${readInfo.getMeteredUnit()}</b></td>
-                    <td class="right"><b>${readInfo.getAssessment()}</b></td>
-                    <td class="right"><b>${readInfo.getBilledUnit()}</b></td>
+                    <td class="right"><b>${JteUtil.get(read.getCurrentRead())}</b></td>
+                    <td class="right"><b>${JteUtil.get(read.getPreviousRead())}</b></td>
+                    <td class="right"><b>${JteUtil.get(read.getMf())}</b></td>
+                    <td class="right"><b>${JteUtil.get(read.getMeteredUnit())}</b></td>
+                    <td class="right"><b>${JteUtil.get(read.getAssessment())}</b></td>
+                    <td class="right"><b>${JteUtil.get(read.getBilledUnit())}</b></td>
                 </tr>
             </table>
         @endif
@@ -831,34 +834,34 @@
                 </tr>
                 <tr>
                     <td>Energy charges</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getEnergyCharge()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getEnergyCharge())}</b></td>
                 </tr>
                 <tr>
                     <td>Fuel &amp; Power Purchase Adjustment Surcharge</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getFppas()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getFppas())}</b></td>
                 </tr>
                 <tr>
                     <td>Fixed charges</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getFixedCharge()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getFixedCharge())}</b></td>
                 </tr>
                 <tr>
                     <td style="background:rgba(16,185,129,0.12); font-weight:900;">Sub Total</td>
                     <td class="right" style="background:rgba(16,185,129,0.12); font-weight:900;">
-                        <b>${billTemplate.getBillInformation().getSubTotalOne()}</b></td>
+                        <b>${JteUtil.get(billInfo.getSubTotalOne())}</b></td>
                 </tr>
 
                 <tr>
                     <td>Electricity Duty</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getElectricityDuty()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getElectricityDuty())}</b></td>
                 </tr>
                 <tr>
                     <td>CCB Adjustment</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getCcbAdjustment()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getCcbAdjustment())}</b></td>
                 </tr>
                 <tr>
                     <td style="background:rgba(16,185,129,0.12); font-weight:900;">Sub Total</td>
                     <td class="right" style="background:rgba(16,185,129,0.12); font-weight:900;">
-                        <b>${billTemplate.getBillInformation().getSubTotalTwo()}</b></td>
+                        <b>${JteUtil.get(billInfo.getSubTotalTwo())}</b></td>
                 </tr>
 
                 <tr>
@@ -868,64 +871,64 @@
                 </tr>
                 <tr>
                     <td>Penal Charge (+)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getPenalCharge()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getPenalCharge())}</b></td>
                 </tr>
                 <tr>
                     <td>PF Surcharge / Incentive (+/-)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getPfSurchargeOrIncentive()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getPfSurchargeOrIncentive())}</b></td>
                 </tr>
                 <tr>
                     <td>ASD Installments (+)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getAsdInstallment()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getAsdInstallment())}</b></td>
                 </tr>
                 <tr>
                     <td>TOD Rebate / Surcharge (+/-)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getTodRebateOrSurcharge()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getTodRebateOrSurcharge())}</b></td>
                 </tr>
                 <tr>
                     <td>Interest on Security Deposit (-)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getSdInterest()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getSdInterest())}</b></td>
                 </tr>
                 <tr>
                     <td>Load Factor Incentive</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getLocdFactorIncentive()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getLocdFactorIncentive())}</b></td>
                 </tr>
                 <tr>
                     <td>Lock Credit</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getLockCredit()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getLockCredit())}</b></td>
                 </tr>
                 <tr>
                     <td>Employee Rebate (-)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getEmployeeRebate()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getEmployeeRebate())}</b></td>
                 </tr>
                 <tr>
                     <td>Prepaid Payment Rebate (-)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getPrepaidPaymentRebate()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getPrepaidPaymentRebate())}</b></td>
                 </tr>
                 <tr>
                     <td>Online Payment Rebate (-)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getOnlinePaymentRebate()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getOnlinePaymentRebate())}</b></td>
                 </tr>
                 <tr>
                     <td>Prompt Payment Incentive (-)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getPromptPaymentIncentive()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getPromptPaymentIncentive())}</b></td>
                 </tr>
                 <tr>
                     <td>Advance Payment Incentive (-)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getAdvancePaymentIncentive()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getAdvancePaymentIncentive())}</b></td>
                 </tr>
                 <tr>
                     <td>Demand Side Incentive (-)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getDemandSideIncentive()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getDemandSideIncentive())}</b></td>
                 </tr>
                 <tr>
                     <td>Wheeling Charge / Green Energy Charge (+)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getWheelingCharge()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getWheelingCharge())}</b></td>
                 </tr>
                 <tr>
                     <td style="background:rgba(16,185,129,0.12); font-weight:900;">Sub Total</td>
                     <td class="right" style="background:rgba(16,185,129,0.12); font-weight:900;">
-                        <b>${billTemplate.getBillInformation().getSubTotalThree()}</b></td>
+                        <b>${JteUtil.get(billInfo.getSubTotalThree())}</b></td>
                 </tr>
             </table>
         </div>
@@ -935,81 +938,79 @@
                 <tr>
                     <th colspan="2">Billing Charges Information</th>
                 </tr>
-
                 <tr>
                     <td><b>Subsidy (M.P. Govt.)</b></td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getSubsidy()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getSubsidy())}</b></td>
                 </tr>
                 <tr>
                     <td style="background:rgba(16,185,129,0.12); font-weight:900;">Current Month Bill</td>
                     <td class="right" style="background:rgba(16,185,129,0.12); font-weight:900;">
-                        <b>${billTemplate.getBillInformation().getSubTotalFour()}</b></td>
+                        <b>${JteUtil.get(billInfo.getSubTotalFour())}</b></td>
                 </tr>
-
                 <tr>
                     <td colspan="2" style="background:var(--soft2); font-weight:900;text-align: right;">Arrear</td>
                 </tr>
                 <tr>
                     <td>Principal arrear</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getPrincipalArrear()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getPrincipalArrear())}</b></td>
                 </tr>
                 <tr>
                     <td>Cumulative surcharge</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getCumulativeSurcharge()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getCumulativeSurcharge())}</b></td>
                 </tr>
                 <tr>
                     <td>ASD Arrear</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getAsdArrear()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getAsdArrear())}</b></td>
                 </tr>
                 <tr>
                     <td style="background:rgba(16,185,129,0.12); font-weight:900;">Net Bill</td>
                     <td class="right" style="background:rgba(16,185,129,0.12); font-weight:900;">
-                        <b>${billTemplate.getBillInformation().getNetBill()}</b></td>
+                        <b>${JteUtil.get(billInfo.getNetBill())}</b></td>
                 </tr>
                 <tr>
                     <td colspan="2" style="background:var(--soft2); font-weight:900;text-align: right;">Payments</td>
                 </tr>
                 <tr>
                     <td>Payment Received Against Bill & Vigilance</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getPaymentForBillAndVigilance()}</b></td>
+                    <td class="right"><b>${billInfo.getPaymentForBillAndVigilance()}</b></td>
                 </tr>
                 <tr>
                     <td>Payment Received Against Smart Meter RC/DC</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getPaymentForSmartMeterRCDC()}</b></td>
+                    <td class="right"><b>${billInfo.getPaymentForSmartMeterRCDC()}</b></td>
                 </tr>
                 <tr>
                     <td colspan="2" style="background:var(--soft2); font-weight:900;text-align: right;">Dues</td>
                 </tr>
                 <tr>
                     <td>Vigilance / O&M Due Amount</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getVigilanceDueAmount()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getVigilanceDueAmount())}</b></td>
                 </tr>
                 <tr>
                     <td>Interest on Vigilance / O&M Due (Till Billing Period)</td>
-                    <td class="right"><b>${billTemplate.getBillInformation().getVigilanceDueInterestAmount()}</b></td>
+                    <td class="right"><b>${JteUtil.get(billInfo.getVigilanceDueInterestAmount())}</b></td>
                 </tr>
                 <tr>
                     <td style="background:rgba(245,158,11,0.18); font-weight:950;">
                         Total Amount Payable
-                        @if(billTemplate.getBillInformation().getTotalPayableAmount().compareTo(java.math.BigDecimal.ZERO) < 0)
+                        @if(billInfo.getTotalPayableAmount().compareTo(BigDecimal.ZERO) < 0)
                             (Not for Payment)
                         @endif
                     </td>
                     <td class="right" style="background:rgba(245,158,11,0.18); font-weight:950;">
-                        <b>${billTemplate.getBillInformation().getTotalPayableAmount()}</b></td>
+                        <b>${JteUtil.get(billInfo.getTotalPayableAmount())}</b></td>
                 </tr>
             </table>
 
             <div class="chart-wrap" style="margin-top:2px; height: 225px;">
-                <img src="${billTemplate.getAdvertisementInformation().getPageTwoOneBase64Image()}" alt=""
-                     style="height: 100%; width: 100%;">
+                <img src="${adInfo.getPageTwoOneBase64Image()}" alt=""
+                     style="height: 100%; width: 100%;"/>
             </div>
         </div>
     </div>
 
     <div class="page-footer">
-        <div class="page-footer-left">${billTemplate.getConsumerInformation().getConsumerNo()}</div>
-        <div class="page-footer-center">${billTemplate.getBillSummary().getBillMonth()}</div>
+        <div class="page-footer-left">${consumerInfo.getConsumerNo()}</div>
+        <div class="page-footer-center">${billSummary.getBillMonth()}</div>
         <div class="page-footer-right">Page 2 of 4</div>
     </div>
 </div>
@@ -1017,8 +1018,7 @@
 
 <!-- PAGE 3 -->
 <div class="page">
-    @if(billTemplate.getConnectionInformation().isNetMeter()
-            && billTemplate.getTodInformation().getTodNetMeterDetailList() != null && !billTemplate.getTodInformation().getTodNetMeterDetailList().isEmpty())
+    @if(connectionInfo.isNetMeter() && !GlobalUtil.isEmpty(todInfo.getTodNetMeterDetailList()))
         <div class="band-title">TOD DETAILS</div>
         <div class="table-scroll" style="margin-top:6px;">
             <table class="reading-table">
@@ -1036,7 +1036,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @for(var tod : billTemplate.getTodInformation().getTodNetMeterDetailList())
+                @for(var tod : todInfo.getTodNetMeterDetailList())
                     <tr>
                         @if("IMPORT".equals(tod.getNetMeterType()))
                             <td rowspan="2">
@@ -1045,30 +1045,29 @@
                             </td>
                         @endif
                         <td>${tod.getNetMeterType()}</td>
-                        <td class="right">${tod.getCurrentRead()}</td>
-                        <td class="right">${tod.getPreviousRead()}</td>
-                        <td class="right">${tod.getMeterConsumption()}</td>
-                        <td class="right">${tod.getAssessment()}</td>
-                        <td class="right">${tod.getFinalConsumption()}</td>
+                        <td class="right">${JteUtil.get(tod.getCurrentRead())}</td>
+                        <td class="right">${JteUtil.get(tod.getPreviousRead())}</td>
+                        <td class="right">${JteUtil.get(tod.getMeterConsumption())}</td>
+                        <td class="right">${JteUtil.get(tod.getAssessment())}</td>
+                        <td class="right">${JteUtil.get(tod.getFinalConsumption())}</td>
                         @if("IMPORT".equals(tod.getNetMeterType()))
-                            <td rowspan="2">${tod.getNetConsumption()}</td>
+                            <td rowspan="2">${JteUtil.get(tod.getNetConsumption())}</td>
                         @endif
                         @if("IMPORT".equals(tod.getNetMeterType()))
-                            <td rowspan="2">${tod.getAmount()}</td>
+                            <td rowspan="2">${JteUtil.get(tod.getAmount())}</td>
                         @endif
                     </tr>
                 @endfor
                 </tbody>
             </table>
         </div>
-    @elseif(!billTemplate.getConnectionInformation().isNetMeter() && billTemplate.getTodInformation() != null
-            && billTemplate.getTodInformation().getTodDetailList() != null && !billTemplate.getTodInformation().getTodDetailList().isEmpty())
+    @elseif(!connectionInfo.isNetMeter() && todInfo != null && !GlobalUtil.isEmpty(todInfo.getTodDetailList()))
         <div class="band-title">TOD DETAILS</div>
         <div class="mt-8 two-col">
             <div class="l">
                 <div class="chart-wrap" style="margin-top:2px; height: 180px;">
-                    <img src="${billTemplate.getTodInformation().getTodPieChartBase64Image()}" alt="" width="350px"
-                         height="172px">
+                    <img src="${todInfo.getTodPieChartBase64Image()}" alt="" width="350px"
+                         height="172px"/>
                 </div>
             </div>
             <div class="r">
@@ -1078,12 +1077,12 @@
                         <th class="right">Units</th>
                         <th class="right">Amount (₹)</th>
                     </tr>
-                    @for(var tod : billTemplate.getTodInformation().getTodDetailList())
+                    @for(var tod : todInfo.getTodDetailList())
                         <tr>
                             <td><b>${tod.getType()}</b></td>
                             <td>${tod.getDemandHour()}</td>
-                            <td class="right">${tod.getUnit()}</td>
-                            <td class="right">${tod.getAmount()}</td>
+                            <td class="right">${JteUtil.get(tod.getUnit())}</td>
+                            <td class="right">${JteUtil.get(tod.getAmount())}</td>
                         </tr>
                     @endfor
                 </table>
@@ -1106,7 +1105,7 @@
                     <td><b>${payment.getPayMonth()}</b></td>
                     <td class="right"><b>${payment.getAmount()}</b></td>
                     <td>${payment.getCacNo()}</td>
-                    <td>${payment.getPayDate()}</td>
+                    <td>${JteUtil.get(payment.getPayDate())}</td>
                     <td>${payment.getPayMode()}</td>
                 </tr>
             @endfor
@@ -1125,18 +1124,17 @@
             @for(var read : billTemplate.getReadHistoryInformationList())
                 <tr>
                     <td>${read.getBillMonth()}</td>
-                    <td>${read.getReadDate()}</td>
-                    <td class="right">${read.getReading()}</td>
-                    <td class="right">${read.getUnit()}</td>
+                    <td>${JteUtil.get(read.getReadDate())}</td>
+                    <td class="right">${JteUtil.get(read.getReading())}</td>
+                    <td class="right">${JteUtil.get(read.getUnit())}</td>
                 </tr>
             @endfor
             </tbody>
         </table>
     </div>
 
-    @if(billTemplate.getConnectionInformation().isNetMeter())
-        @if(billTemplate.getMeterReplacementInformation() != null && billTemplate.getMeterReplacementInformation().getNetMeterReplacementDetailList() != null
-                && !billTemplate.getMeterReplacementInformation().getNetMeterReplacementDetailList().isEmpty())
+    @if(connectionInfo.isNetMeter())
+        @if(meterReplacementInfo != null && !GlobalUtil.isEmpty(meterReplacementInfo.getNetMeterReplacementDetailList()))
             <div class="band-title" style="margin-top:3px;">Meter Replacement and Read Detail</div>
             <div class="table-scroll" style="margin-top:6px;">
                 <table class="reading-table" style="margin-top:6px;">
@@ -1158,17 +1156,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @for(var replacement : billTemplate.getMeterReplacementInformation().getNetMeterReplacementDetailList())
+                    @for(var replacement : meterReplacementInfo.getNetMeterReplacementDetailList())
                         <tr>
                             <td>${replacement.getMeterDetail()}</td>
-                            <td class="right">${replacement.getReplacementDate()}</td>
-                            <td class="right">${replacement.getImportPreviousRead()}</td>
-                            <td class="right">${replacement.getImportCurrentRead()}</td>
-                            <td class="right">${replacement.getImportConsumption()}</td>
-                            <td class="right">${replacement.getExportPreviousRead()}</td>
-                            <td class="right">${replacement.getExportCurrentRead()}</td>
-                            <td class="right">${replacement.getExportConsumption()}</td>
-                            <td class="right">${replacement.getNetConsumption()}</td>
+                            <td class="right">${JteUtil.get(replacement.getReplacementDate())}</td>
+                            <td class="right">${JteUtil.get(replacement.getImportPreviousRead())}</td>
+                            <td class="right">${JteUtil.get(replacement.getImportCurrentRead())}</td>
+                            <td class="right">${JteUtil.get(replacement.getImportConsumption())}</td>
+                            <td class="right">${JteUtil.get(replacement.getExportPreviousRead())}</td>
+                            <td class="right">${JteUtil.get(replacement.getExportCurrentRead())}</td>
+                            <td class="right">${JteUtil.get(replacement.getExportConsumption())}</td>
+                            <td class="right">${JteUtil.get(replacement.getNetConsumption())}</td>
                         </tr>
                     @endfor
                     </tbody>
@@ -1176,8 +1174,7 @@
             </div>
         @endif
     @else
-        @if(billTemplate.getMeterReplacementInformation() != null && billTemplate.getMeterReplacementInformation().getMeterReplacementDetailList() != null
-                && !billTemplate.getMeterReplacementInformation().getMeterReplacementDetailList().isEmpty())
+        @if(meterReplacementInfo != null && !GlobalUtil.isEmpty(meterReplacementInfo.getMeterReplacementDetailList()))
             <div class="band-title" style="margin-top:3px;">Meter Replacement and Read Detail</div>
             <div class="table-scroll">
                 <table class="reading-table">
@@ -1192,14 +1189,14 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @for(var replacement : billTemplate.getMeterReplacementInformation().getMeterReplacementDetailList())
+                    @for(var replacement : meterReplacementInfo.getMeterReplacementDetailList())
                         <tr>
                             <td>${replacement.getMeterDetail()}</td>
-                            <td class="right">${replacement.getReplacementDate()}</td>
-                            <td class="right">${replacement.getPreviousRead()}</td>
-                            <td class="right">${replacement.getCurrentRead()}</td>
-                            <td class="right">${replacement.getConsumption()}</td>
-                            <td class="right">${replacement.getProratedCurrentBill()}</td>
+                            <td class="right">${JteUtil.get(replacement.getReplacementDate())}</td>
+                            <td class="right">${JteUtil.get(replacement.getPreviousRead())}</td>
+                            <td class="right">${JteUtil.get(replacement.getCurrentRead())}</td>
+                            <td class="right">${JteUtil.get(replacement.getConsumption())}</td>
+                            <td class="right">${JteUtil.get(replacement.getProratedCurrentBill())}</td>
                         </tr>
                     @endfor
                     </tbody>
@@ -1209,15 +1206,15 @@
     @endif
 
     <div class="page-footer">
-        <div class="page-footer-left">${billTemplate.getConsumerInformation().getConsumerNo()}</div>
-        <div class="page-footer-center">${billTemplate.getBillSummary().getBillMonth()}</div>
+        <div class="page-footer-left">${consumerInfo.getConsumerNo()}</div>
+        <div class="page-footer-center">${billSummary.getBillMonth()}</div>
         <div class="page-footer-right">Page 3 of 4</div>
     </div>
 </div>
 
 <!-- Page 4 -->
 <div class="page">
-    @if(billTemplate.getConnectionInformation().isNetMeterParent() && billTemplate.getNetMeterChildInformationList() != null && !billTemplate.getNetMeterChildInformationList().isEmpty())
+    @if(connectionInfo.isNetMeterParent() && !GlobalUtil.isEmpty(billTemplate.getNetMeterChildInformationList()))
         <div class="band-title" style="margin-top:3px;">Virtual / Group Net Meter Child Connection Export Detail</div>
         <div class="table-scroll">
             <table class="reading-table">
@@ -1237,13 +1234,13 @@
                 @for(var child : billTemplate.getNetMeterChildInformationList())
                     <tr>
                         <td>${child.getConsumerNo()}</td>
-                        <td class="right">${child.getRatio()}</td>
-                        <td class="right">${child.getCurrentRead()}</td>
-                        <td class="right">${child.getPreviousRead()}</td>
-                        <td class="right">${child.getMf()}</td>
-                        <td class="right">${child.getMeterConsumption()}</td>
-                        <td class="right">${child.getAssessment()}</td>
-                        <td class="right">${child.getFinalConsumption()}</td>
+                        <td class="right">${JteUtil.get(child.getRatio())}</td>
+                        <td class="right">${JteUtil.get(child.getCurrentRead())}</td>
+                        <td class="right">${JteUtil.get(child.getPreviousRead())}</td>
+                        <td class="right">${JteUtil.get(child.getMf())}</td>
+                        <td class="right">${JteUtil.get(child.getMeterConsumption())}</td>
+                        <td class="right">${JteUtil.get(child.getAssessment())}</td>
+                        <td class="right">${JteUtil.get(child.getFinalConsumption())}</td>
                     </tr>
                 @endfor
                 </tbody>
@@ -1251,7 +1248,7 @@
         </div>
     @endif
 
-    @if(billTemplate.getBillCalculationInformationList() != null && !billTemplate.getBillCalculationInformationList().isEmpty())
+    @if(!GlobalUtil.isEmpty(billTemplate.getBillCalculationInformationList()))
         <div class="band-title" style="margin-top:3px;">HEAD WISE BILL CALCULATION DETAIL</div>
         <div class="table-scroll">
             <table class="reading-table" style="min-width:0;">
@@ -1281,7 +1278,7 @@
 
     <div class="band-title" style="margin-top:3px;">OTHER ACCOUNT DETAILS</div>
     <div class="table-scroll">
-        @if(billTemplate.getVigilanceInformationList() != null && !billTemplate.getVigilanceInformationList().isEmpty())
+        @if(!GlobalUtil.isEmpty(billTemplate.getVigilanceInformationList()))
             !{var mid = (int) Math.ceil((double) billTemplate.getVigilanceInformationList().size()/2);}
 
             <table>
@@ -1302,7 +1299,7 @@
                                 !{var vigilance = billTemplate.getVigilanceInformationList().get(index);}
                                 <tr>
                                     <td>${index} - ${vigilance.getDescription()}</td>
-                                    <td class="right">${vigilance.getAmount()}</td>
+                                    <td class="right">${JteUtil.get(vigilance.getAmount())}</td>
                                 </tr>
                             @endfor
                             </tbody>
@@ -1322,7 +1319,7 @@
                                     !{var vigilance = billTemplate.getVigilanceInformationList().get(index);}
                                     <tr>
                                         <td>${index} - ${vigilance.getDescription()}</td>
-                                        <td class="right">${vigilance.getAmount()}</td>
+                                        <td class="right">${JteUtil.get(vigilance.getAmount())}</td>
                                     </tr>
                                 @endfor
                                 </tbody>
@@ -1333,7 +1330,7 @@
             </table>
         @endif
 
-        @if(billTemplate.getAdjustmentInformationList() != null && !billTemplate.getAdjustmentInformationList().isEmpty())
+        @if(!GlobalUtil.isEmpty(billTemplate.getAdjustmentInformationList()))
             !{var mid = (int) Math.ceil((double) billTemplate.getAdjustmentInformationList().size()/2);}
             <table>
                 <tr>
@@ -1353,7 +1350,7 @@
                                 !{var adjustment = billTemplate.getAdjustmentInformationList().get(index);}
                                 <tr>
                                     <td>${index} - ${adjustment.getDescription()}</td>
-                                    <td class="right">${adjustment.getAmount()}</td>
+                                    <td class="right">${JteUtil.get(adjustment.getAmount())}</td>
                                 </tr>
                             @endfor
                             </tbody>
@@ -1373,7 +1370,7 @@
                                     !{var adjustment = billTemplate.getAdjustmentInformationList().get(index);}
                                     <tr>
                                         <td>${index} - ${adjustment.getDescription()}</td>
-                                        <td class="right">${adjustment.getAmount()}</td>
+                                        <td class="right">${JteUtil.get(adjustment.getAmount())}</td>
                                     </tr>
                                 @endfor
                                 </tbody>
@@ -1384,7 +1381,7 @@
             </table>
         @endif
     </div>
-    @if(billTemplate.getEcgrfInformationList() != null && !billTemplate.getEcgrfInformationList().isEmpty())
+    @if(!GlobalUtil.isEmpty(billTemplate.getEcgrfInformationList()))
         <div class="band-title" style="margin-top:6px;">CIRCLE LEVEL ELECTRICITY CONSUMERS GRIEVANCE REDRESSAL FORUM
             (ECGRF)
         </div>
@@ -1412,20 +1409,20 @@
         </div>
     @endif
 
-    @if(billTemplate.getAdvertisementInformation().getLastPageBase64Image() !=null && !billTemplate.getAdvertisementInformation().getLastPageBase64Image().isEmpty())
-        @for(var adimage : billTemplate.getAdvertisementInformation().getLastPageBase64Image())
-            <div class="mt-1">
-                <div class="band-title">ADVERTISEMENTS</div>
+    <div class="mt-1">
+        <div class="band-title">ADVERTISEMENTS</div>
+        @if(adInfo.getLastPageBase64Image() !=null && !adInfo.getLastPageBase64Image().isEmpty())
+            @for(var adImage : adInfo.getLastPageBase64Image())
                 <div class="poster" style="height: 130px;">
-                    <img src="${adimage}" alt="" style="height: 100%; width: 100%;">
+                    <img src="${adImage}" alt="" style="height: 100%; width: 100%;"/>
                 </div>
-            </div>
-        @endfor
-    @endif
+            @endfor
+        @endif
+    </div>
 
     <div class="page-footer">
-        <div class="page-footer-left">${billTemplate.getConsumerInformation().getConsumerNo()}</div>
-        <div class="page-footer-center">${billTemplate.getBillSummary().getBillMonth()}</div>
+        <div class="page-footer-left">${consumerInfo.getConsumerNo()}</div>
+        <div class="page-footer-center">${billSummary.getBillMonth()}</div>
         <div class="page-footer-right">Page 4 of 4</div>
     </div>
 </div>

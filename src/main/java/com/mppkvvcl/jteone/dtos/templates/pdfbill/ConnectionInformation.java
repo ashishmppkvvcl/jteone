@@ -1,6 +1,7 @@
 package com.mppkvvcl.jteone.dtos.templates.pdfbill;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class ConnectionInformation {
 
@@ -16,7 +17,7 @@ public class ConnectionInformation {
     private String areaType;
     private String tariffCategory;
     private String tariffCode;
-    private String connectionDate;
+    private LocalDate connectionDate;
     private String phase;
     private BigDecimal sanctionedLoad;
     private String sanctionedLoadUnit;
@@ -30,7 +31,7 @@ public class ConnectionInformation {
     private String netMeterType;
     private boolean isMemberOfHTGroupHousingSociety;
     private boolean isPrepaid;
-    private String prepaidDate;
+    private LocalDate prepaidDate;
     private String meterAttribute;
 
     public String getDivisionName() {
@@ -129,11 +130,11 @@ public class ConnectionInformation {
         this.tariffCode = tariffCode;
     }
 
-    public String getConnectionDate() {
+    public LocalDate getConnectionDate() {
         return connectionDate;
     }
 
-    public void setConnectionDate(String connectionDate) {
+    public void setConnectionDate(LocalDate connectionDate) {
         this.connectionDate = connectionDate;
     }
 
@@ -241,11 +242,11 @@ public class ConnectionInformation {
         isPrepaid = prepaid;
     }
 
-    public String getPrepaidDate() {
+    public LocalDate getPrepaidDate() {
         return prepaidDate;
     }
 
-    public void setPrepaidDate(String prepaidDate) {
+    public void setPrepaidDate(LocalDate prepaidDate) {
         this.prepaidDate = prepaidDate;
     }
 
@@ -260,7 +261,7 @@ public class ConnectionInformation {
     public ConnectionInformation() {
     }
 
-    public ConnectionInformation(String divisionName, String zoneName, String locationCode, String groupNo, String readingDiaryNo, String feederCode, String dtrCode, String poleNo, String purpose, String areaType, String tariffCategory, String tariffCode, String connectionDate, String phase, BigDecimal sanctionedLoad, String sanctionedLoadUnit, BigDecimal contractDemand, String contractDemandUnit, String connectionType, String meteringStatus, boolean isNetMeter, boolean isNetMeterParent, boolean isNetMeterChild, String netMeterType, boolean isMemberOfHTGroupHousingSociety, boolean isPrepaid, String prepaidDate, String meterAttribute) {
+    public ConnectionInformation(String divisionName, String zoneName, String locationCode, String groupNo, String readingDiaryNo, String feederCode, String dtrCode, String poleNo, String purpose, String areaType, String tariffCategory, String tariffCode, LocalDate connectionDate, String phase, BigDecimal sanctionedLoad, String sanctionedLoadUnit, BigDecimal contractDemand, String contractDemandUnit, String connectionType, String meteringStatus, boolean isNetMeter, boolean isNetMeterParent, boolean isNetMeterChild, String netMeterType, boolean isMemberOfHTGroupHousingSociety, boolean isPrepaid, LocalDate prepaidDate, String meterAttribute) {
         this.divisionName = divisionName;
         this.zoneName = zoneName;
         this.locationCode = locationCode;

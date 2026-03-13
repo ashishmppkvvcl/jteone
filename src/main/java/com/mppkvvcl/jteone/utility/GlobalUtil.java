@@ -17,8 +17,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class GlobalUtility {
-    private static final Logger log = LoggerFactory.getLogger(GlobalUtility.class);
+public class GlobalUtil {
+    private static final Logger log = LoggerFactory.getLogger(GlobalUtil.class);
 
     public static final String EXPORT_DATE_FORMAT = "dd/MM/yyyy";
     public static final String BILL_MONTH_FORMAT = "MMM-yyyy";
@@ -31,7 +31,7 @@ public class GlobalUtility {
     }
 
     public static List<String> sortMonths(final List<String> months, final SortOrder sortOrder) {
-        if (GlobalUtility.isEmpty(months) || sortOrder == null) return months;
+        if (GlobalUtil.isEmpty(months) || sortOrder == null) return months;
 
         final List<LocalDate> dates = new ArrayList<>();
         //months.parallelStream().forEach(month -> {
@@ -40,7 +40,7 @@ public class GlobalUtility {
                 dates.add(getDateFromStringBillMonth(month));
             }
         });
-        List<LocalDate> sortedDates = dates;
+        List<LocalDate> sortedDates;
         if (SortOrder.ASC.equals(sortOrder)) {
             sortedDates = dates.stream().sorted().collect(Collectors.toList());
         } else {
@@ -70,14 +70,10 @@ public class GlobalUtility {
     public static String getPreviousMonth(final String billMonth) {
         if (StringUtils.isEmpty(billMonth)) return null;
 
-        String previousMonth = null;
-        try {
-            final LocalDate monthDate = getDateFromStringBillMonth(billMonth);
-            previousMonth = getBillMonthInStringFromDate(monthDate.minusMonths(1L));
-            previousMonth = previousMonth.toUpperCase();
+        final LocalDate monthDate = getDateFromStringBillMonth(billMonth);
+        String previousMonth = getBillMonthInStringFromDate(monthDate.minusMonths(1L));
+        previousMonth = previousMonth.toUpperCase();
 
-        } catch (Exception e) {
-        }
         return previousMonth;
     }
 
@@ -142,7 +138,7 @@ public class GlobalUtility {
     }
 
     public static String genericMask(final String inputData) {
-        if (org.springframework.util.StringUtils.isEmpty(inputData)) return null;
+        if (StringUtils.isEmpty(inputData)) return null;
         int lastIndex = inputData.length() - 1;
         int lMinusTwo = inputData.length() - 3;
         if (lastIndex <= 2 || lMinusTwo <= 0) return inputData;
@@ -162,18 +158,14 @@ public class GlobalUtility {
         if (inputMobileNo == null || inputMobileNo.length() != 10) {
             return inputMobileNo;
         }
-        final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(inputMobileNo.charAt(0));
-        stringBuilder.append(inputMobileNo.charAt(1));
-        stringBuilder.append("x");
-        stringBuilder.append("x");
-        stringBuilder.append("x");
-        stringBuilder.append("x");
-        stringBuilder.append("x");
-        stringBuilder.append(inputMobileNo.charAt(7));
-        stringBuilder.append(inputMobileNo.charAt(8));
-        stringBuilder.append(inputMobileNo.charAt(9));
-        return stringBuilder.toString();
+        String mobileNo = String
+                .valueOf(inputMobileNo.charAt(0)) +
+                inputMobileNo.charAt(1) +
+                "xxxxx" +
+                inputMobileNo.charAt(7) +
+                inputMobileNo.charAt(8) +
+                inputMobileNo.charAt(9);
+        return mobileNo;
     }
 
     public static String maskEmailId(final String inputEmailId) {

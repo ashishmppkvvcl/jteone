@@ -2,19 +2,19 @@ package com.mppkvvcl.jteone.interfaces;
 
 public interface DBProperties {
 
-    public String getUrl();
+    String getUrl();
 
-    public void setUrl(String url);
+    void setUrl(String url);
 
-    public String getDriver();
+    String getDriver();
 
-    public void setDriver(String driver);
+    void setDriver(String driver);
 
-    public String getUsername();
+    String getUsername();
 
-    public void setUsername(String username);
+    void setUsername(String username);
 
-    public String getPassword();
+    String getPassword();
 
-    public void setPassword(String password);
+    void setPassword(String password);
 }

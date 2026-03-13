@@ -27,6 +27,7 @@ public class HtmlToPdfWkOpenService {
             out = httpConfiguration.getRestTemplate().postForObject(apiUrl, htmlContent, byte[].class);
         } catch (Exception exception) {
             log.error("Exception occurred while calling WK Html to Pdf Conversion API", exception);
+            throw new Exception(exception);
         }
 
         return out;
