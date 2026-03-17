@@ -1,6 +1,7 @@
 @import java.math.BigDecimal
 @import com.mppkvvcl.jteone.utility.GlobalUtil
 @import com.mppkvvcl.jteone.utility.JteUtil
+@import org.apache.commons.lang3.StringUtils
 
 @param com.mppkvvcl.jteone.dtos.templates.BillTemplate billTemplate
 
@@ -606,10 +607,17 @@
                             <span class="lbl">METER READER</span>
                             <span class="val">${billSummary.getMeterReaderName()}</span>
                         </td>
-                        <td style="width:25%;">
-                            <span class="lbl">BILL BASIS</span>
-                            <span class="val">${billSummary.getBillBasis()}</span>
-                        </td>
+                        @if(StringUtils.isNotEmpty(billSummary.getBillBasis()))
+                            <td style="width:25%;">
+                                <span class="lbl">BILL BASIS</span>
+                                <span class="val">${billSummary.getBillBasis()}</span>
+                            </td>
+                        @else
+                            <td style="width:25%;">
+                                <span class="lbl">CUSTOMER CARE</span>
+                                <span class="val">1912</span>
+                            </td>
+                        @endif
                     </tr>
 
                     <!-- Row 2 -->
@@ -695,131 +703,133 @@
 
 <!-- PAGE 2 -->
 <div class="page">
-    <div class="band-title" style=" margin-top:3px;">CURRENT READING DETAILS</div>
-    <div class="box soft pad-6">
-        <table class="info-strip" style="width:100%;">
-            <!-- Row 1 -->
-            <tr>
-                <td style="width:16.66%;">
-                    <span class="lbl">METER S.NO.</span>
-                    <span class="val">${readInfo.getMeterSrNo()}</span>
-                </td>
-                <td style="width:16.66%;">
-                    <span class="lbl">READ DATE</span>
-                    <span class="val">${JteUtil.get(readInfo.getDate())}</span>
-                </td>
-                <td style="width:16.66%;">
-                    <span class="lbl">READ TYPE</span>
-                    <span class="val">${readInfo.getType()}</span>
-                </td>
-                <td style="width:16.66%;">
-                    <span class="lbl">READ SOURCE</span>
-                    <span class="val">${readInfo.getSource()}</span>
-                </td>
-                <td style="width:16.66%;">
-                    <span class="lbl">P.F</span>
-                    <span class="val">${JteUtil.get(billInfo.getPf())}</span>
-                </td>
-                <td style="width:16.66%;">
-                    <span class="lbl">MD</span>
-                    <span class="val">${JteUtil.get(billInfo.getMd())}</span>
-                </td>
-            </tr>
-
-            <!-- Row 2 -->
-            @if(connectionInfo.isNetMeter())
+    @if(readInfo.getReadDetailList() != null && readInfo.getReadDetailList().size() > 0)
+        <div class="band-title" style=" margin-top:3px;">CURRENT READING DETAILS</div>
+        <div class="box soft pad-6">
+            <table class="info-strip" style="width:100%;">
+                <!-- Row 1 -->
                 <tr>
-                    <td>
-                        <span class="lbl">SOLAR PLANT CAPACITY</span>
-                        <span class="val">${JteUtil.get(readInfo.getSolarPlantCapacity())}</span>
+                    <td style="width:16.66%;">
+                        <span class="lbl">METER S.NO.</span>
+                        <span class="val">${readInfo.getMeterSrNo()}</span>
                     </td>
-                    <td>
-                        <span class="lbl">CARRY FORWARD UNITS</span>
-                        <span class="val">${JteUtil.get(readInfo.getResidualUnit())}</span>
+                    <td style="width:16.66%;">
+                        <span class="lbl">READ DATE</span>
+                        <span class="val">${JteUtil.get(readInfo.getDate())}</span>
                     </td>
-                    <td>
-                        <span class="lbl">VNM / GNM</span>
-                        <span class="val">@if(connectionInfo.isNetMeterChild()) CHILD
-                            @elseif(connectionInfo.isNetMeterParent()) PARENT @endif
+                    <td style="width:16.66%;">
+                        <span class="lbl">READ TYPE</span>
+                        <span class="val">${readInfo.getType()}</span>
+                    </td>
+                    <td style="width:16.66%;">
+                        <span class="lbl">READ SOURCE</span>
+                        <span class="val">${readInfo.getSource()}</span>
+                    </td>
+                    <td style="width:16.66%;">
+                        <span class="lbl">P.F</span>
+                        <span class="val">${JteUtil.get(billInfo.getPf())}</span>
+                    </td>
+                    <td style="width:16.66%;">
+                        <span class="lbl">MD</span>
+                        <span class="val">${JteUtil.get(billInfo.getMd())}</span>
+                    </td>
+                </tr>
+
+                <!-- Row 2 -->
+                @if(connectionInfo.isNetMeter())
+                    <tr>
+                        <td>
+                            <span class="lbl">SOLAR PLANT CAPACITY</span>
+                            <span class="val">${JteUtil.get(readInfo.getSolarPlantCapacity())}</span>
+                        </td>
+                        <td>
+                            <span class="lbl">CARRY FORWARD UNITS</span>
+                            <span class="val">${JteUtil.get(readInfo.getResidualUnit())}</span>
+                        </td>
+                        <td>
+                            <span class="lbl">VNM / GNM</span>
+                            <span class="val">@if(connectionInfo.isNetMeterChild()) CHILD
+                                @elseif(connectionInfo.isNetMeterParent()) PARENT @endif
                         </span>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            @endif
-        </table>
-    </div>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                @endif
+            </table>
+        </div>
+    @endif
 
-    <div class="box pad-6">
-        @if(connectionInfo.isNetMeter())
-            <table class="reading-table">
-                <thead>
-                <tr>
-                    <th>Particulars</th>
-                    <th class="right">Current Reading</th>
-                    <th class="right">Previous Reading</th>
-                    <th class="right">M.F.</th>
-                    <th class="right">Metered Units</th>
-                    <th class="right">Assessed Units</th>
-                    <th class="right">Final Consumption</th>
-                </tr>
-                </thead>
-                <tbody>
-                !{var importRead = readInfo.getReadDetailList().getFirst();}
-                !{var exportRead = readInfo.getReadDetailList().get(1);}
-                <tr>
-                    <td>IMPORT</td>
-                    <td class="right"><b>${JteUtil.get(importRead.getCurrentRead())}</b></td>
-                    <td class="right"><b>${JteUtil.get(importRead.getPreviousRead())}</b></td>
-                    <td class="right"><b>${JteUtil.get(importRead.getMf())}</b></td>
-                    <td class="right"><b>${JteUtil.get(importRead.getMeteredUnit())}</b></td>
-                    <td class="right"><b>${JteUtil.get(importRead.getAssessment())}</b></td>
-                    <td class="right"><b>${JteUtil.get(importRead.getBilledUnit())}</b></td>
-                </tr>
-                <tr>
-                    <td>EXPORT</td>
-                    <td class="right"><b>${JteUtil.get(exportRead.getCurrentRead())}</b></td>
-                    <td class="right"><b>${JteUtil.get(exportRead.getPreviousRead())}</b></td>
-                    <td class="right"><b>${JteUtil.get(exportRead.getMf())}</b></td>
-                    <td class="right"><b>${JteUtil.get(exportRead.getMeteredUnit())}</b></td>
-                    <td class="right"><b>${JteUtil.get(exportRead.getAssessment())}</b></td>
-                    <td class="right"><b>${JteUtil.get(exportRead.getBilledUnit())}</b></td>
-                </tr>
-                <tr class="row-highlight">
-                    <td colspan="4" style="text-align:center;">Residual Units Adjusted</td>
-                    <td class="right" colspan="3">${JteUtil.get(readInfo.getResidualUnitAdjusted())}</td>
-                </tr>
-                <tr class="row-total">
-                    <td colspan="4" style="text-align:center;">Net</td>
-                    <td class="right">${JteUtil.get(readInfo.getNetMeteredUnit())}</td>
-                    <td class="right"></td>
-                    <td class="right">${JteUtil.get(readInfo.getNetBilledUnit())}</td>
-                </tr>
-                </tbody>
-            </table>
-        @else
-            !{var read = readInfo.getReadDetailList().getFirst();}
-            <table class="tight">
-                <tr>
-                    <th class="right">Current Reading</th>
-                    <th class="right">Previous Reading</th>
-                    <th class="right">M.F.</th>
-                    <th class="right">Metered Units</th>
-                    <th class="right">Assessed Units</th>
-                    <th class="right">Total Units</th>
-                </tr>
-                <tr>
-                    <td class="right"><b>${JteUtil.get(read.getCurrentRead())}</b></td>
-                    <td class="right"><b>${JteUtil.get(read.getPreviousRead())}</b></td>
-                    <td class="right"><b>${JteUtil.get(read.getMf())}</b></td>
-                    <td class="right"><b>${JteUtil.get(read.getMeteredUnit())}</b></td>
-                    <td class="right"><b>${JteUtil.get(read.getAssessment())}</b></td>
-                    <td class="right"><b>${JteUtil.get(read.getBilledUnit())}</b></td>
-                </tr>
-            </table>
-        @endif
-    </div>
+    @if(connectionInfo.isNetMeter() && readInfo.getReadDetailList() != null && readInfo.getReadDetailList().size() >= 2)
+        <div class="box pad-6">
+        <table class="reading-table">
+            <thead>
+            <tr>
+                <th>Particulars</th>
+                <th class="right">Current Reading</th>
+                <th class="right">Previous Reading</th>
+                <th class="right">M.F.</th>
+                <th class="right">Metered Units</th>
+                <th class="right">Assessed Units</th>
+                <th class="right">Final Consumption</th>
+            </tr>
+            </thead>
+            <tbody>
+            !{var importRead = readInfo.getReadDetailList().getFirst();}
+            !{var exportRead = readInfo.getReadDetailList().get(1);}
+            <tr>
+                <td>IMPORT</td>
+                <td class="right"><b>${JteUtil.get(importRead.getCurrentRead())}</b></td>
+                <td class="right"><b>${JteUtil.get(importRead.getPreviousRead())}</b></td>
+                <td class="right"><b>${JteUtil.get(importRead.getMf())}</b></td>
+                <td class="right"><b>${JteUtil.get(importRead.getMeteredUnit())}</b></td>
+                <td class="right"><b>${JteUtil.get(importRead.getAssessment())}</b></td>
+                <td class="right"><b>${JteUtil.get(importRead.getBilledUnit())}</b></td>
+            </tr>
+            <tr>
+                <td>EXPORT</td>
+                <td class="right"><b>${JteUtil.get(exportRead.getCurrentRead())}</b></td>
+                <td class="right"><b>${JteUtil.get(exportRead.getPreviousRead())}</b></td>
+                <td class="right"><b>${JteUtil.get(exportRead.getMf())}</b></td>
+                <td class="right"><b>${JteUtil.get(exportRead.getMeteredUnit())}</b></td>
+                <td class="right"><b>${JteUtil.get(exportRead.getAssessment())}</b></td>
+                <td class="right"><b>${JteUtil.get(exportRead.getBilledUnit())}</b></td>
+            </tr>
+            <tr class="row-highlight">
+                <td colspan="4" style="text-align:center;">Residual Units Adjusted</td>
+                <td class="right" colspan="3">${JteUtil.get(readInfo.getResidualUnitAdjusted())}</td>
+            </tr>
+            <tr class="row-total">
+                <td colspan="4" style="text-align:center;">Net</td>
+                <td class="right">${JteUtil.get(readInfo.getNetMeteredUnit())}</td>
+                <td class="right"></td>
+                <td class="right">${JteUtil.get(readInfo.getNetBilledUnit())}</td>
+            </tr>
+            </tbody>
+        </table>
+    @elseif(readInfo.getReadDetailList() != null && readInfo.getReadDetailList().size() == 1)
+        !{var read = readInfo.getReadDetailList().getFirst();}
+        <table class="tight">
+            <tr>
+                <th class="right">Current Reading</th>
+                <th class="right">Previous Reading</th>
+                <th class="right">M.F.</th>
+                <th class="right">Metered Units</th>
+                <th class="right">Assessed Units</th>
+                <th class="right">Total Units</th>
+            </tr>
+            <tr>
+                <td class="right"><b>${JteUtil.get(read.getCurrentRead())}</b></td>
+                <td class="right"><b>${JteUtil.get(read.getPreviousRead())}</b></td>
+                <td class="right"><b>${JteUtil.get(read.getMf())}</b></td>
+                <td class="right"><b>${JteUtil.get(read.getMeteredUnit())}</b></td>
+                <td class="right"><b>${JteUtil.get(read.getAssessment())}</b></td>
+                <td class="right"><b>${JteUtil.get(read.getBilledUnit())}</b></td>
+            </tr>
+        </table>
+        </div>
+    @endif
 
     <div class="band-title mt-10">DETAILED BILL BREAKUP</div>
     <div class="two-col mt-8">
@@ -1120,6 +1130,8 @@
                 <th>Bill Date</th>
                 <th class="right">Reading</th>
                 <th class="right">Units</th>
+                <th class="right">MD</th>
+                <th class="right">PF</th>
             </tr>
             @for(var read : billTemplate.getReadHistoryInformationList())
                 <tr>
@@ -1127,6 +1139,8 @@
                     <td>${JteUtil.get(read.getReadDate())}</td>
                     <td class="right">${JteUtil.get(read.getReading())}</td>
                     <td class="right">${JteUtil.get(read.getUnit())}</td>
+                    <td class="right">${JteUtil.get(read.getBilledMd())}</td>
+                    <td class="right">${JteUtil.get(read.getBilledPf())}</td>
                 </tr>
             @endfor
             </tbody>
@@ -1298,7 +1312,7 @@
                             @for(int index = 0; index < mid; index++)
                                 !{var vigilance = billTemplate.getVigilanceInformationList().get(index);}
                                 <tr>
-                                    <td>${index} - ${vigilance.getDescription()}</td>
+                                    <td>${vigilance.getDescription()}</td>
                                     <td class="right">${JteUtil.get(vigilance.getAmount())}</td>
                                 </tr>
                             @endfor
@@ -1318,7 +1332,7 @@
                                 @for(int index = mid; index < billTemplate.getVigilanceInformationList().size(); index++)
                                     !{var vigilance = billTemplate.getVigilanceInformationList().get(index);}
                                     <tr>
-                                        <td>${index} - ${vigilance.getDescription()}</td>
+                                        <td>${vigilance.getDescription()}</td>
                                         <td class="right">${JteUtil.get(vigilance.getAmount())}</td>
                                     </tr>
                                 @endfor
@@ -1349,7 +1363,7 @@
                             @for(int index = 0; index < mid; index++)
                                 !{var adjustment = billTemplate.getAdjustmentInformationList().get(index);}
                                 <tr>
-                                    <td>${index} - ${adjustment.getDescription()}</td>
+                                    <td>${adjustment.getDescription()}</td>
                                     <td class="right">${JteUtil.get(adjustment.getAmount())}</td>
                                 </tr>
                             @endfor
@@ -1369,7 +1383,7 @@
                                 @for(int index = mid; index < billTemplate.getAdjustmentInformationList().size(); index++)
                                     !{var adjustment = billTemplate.getAdjustmentInformationList().get(index);}
                                     <tr>
-                                        <td>${index} - ${adjustment.getDescription()}</td>
+                                        <td>${adjustment.getDescription()}</td>
                                         <td class="right">${JteUtil.get(adjustment.getAmount())}</td>
                                     </tr>
                                 @endfor
@@ -1392,7 +1406,7 @@
                     <th>Member Type</th>
                     <th>Name</th>
                     <th class="right">Contact No.</th>
-                    <th>Member Type</th>
+                    <th>Case Handling</th>
                 </tr>
                 </thead>
                 <tbody>

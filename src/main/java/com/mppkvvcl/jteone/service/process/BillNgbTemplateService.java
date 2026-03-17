@@ -173,7 +173,7 @@ public class BillNgbTemplateService {
         final String consumerNo = billIdentifierDTO.getConsumerNo();
         final String billMonth = billIdentifierDTO.getBillMonth();
 
-        final BillInterface bill = billService.getByConsumerNoAndBillMonthAndDeleted(consumerNo, billMonth, false);
+        final BillInterface bill = billService.getActiveByConsumerNoAndBillMonth(consumerNo, billMonth);
         if (bill == null) {
             messageDTO.setMessage("Bill not found for " + consumerNo + ", " + billMonth);
             log.info(messageDTO.getMessage());
@@ -261,7 +261,7 @@ public class BillNgbTemplateService {
         final BillInformation billInformation = new BillInformation(bill.getEnergyCharge(), bill.getFcaCharge(), bill.getFixedCharge(), subTotalOne, bill.getElectricityDuty(), bill.getCcbAdjustment(), subTotalTwo,
                 penalCharge, bill.getPfCharge(), bill.getAsdInstallment(), todSurchargeAndRebate, bill.getSdInterest(), bill.getLoadFactorIncentive(), bill.getLockCredit(), bill.getEmployeeRebate(), bill.getPrepaidMeterRebate(),
                 bill.getOnlinePaymentRebate(), bill.getPromptPaymentIncentive(), bill.getAdvancePaymentIncentive(), bill.getDemandSideIncentive(), wheelingCharges == null ? BigDecimal.ZERO : wheelingCharges, subTotalThree,
-                bill.getSubsidy(), subTotalFour, bill.getArrear(), bill.getCumulativeSurcharge(), bill.getAsdArrear(), bill.getNetBill(), unpostedPayment, rcdcAmount.longValue(),
+                bill.getSubsidy(), subTotalFour, bill.getArrear(), bill.getCumulativeSurcharge(), bill.getAsdArrear(), bill.getNetBill(), unpostedPayment, rcdcAmount == null ? 0L : rcdcAmount.longValue(),
                 vigilenceEnergyCharge, vigilenceSurcharge, payableTotalingAmount, bill.getBilledPF(), bill.getBilledMD(), bill.getPreviousRead(), bill.getMeteredUnit(), bill.getCurrentRead(), bill.getSurchargeDemanded());
 
         templateData.setBillSummary(billSummary);
@@ -313,8 +313,11 @@ public class BillNgbTemplateService {
                 if (maxIndex >= 0) {
                     ReadMasterInterface readMaster = readMasterList.getFirst();
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(1, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
-                        readHistoryInformationList.add(readHistoryInformation);
+                        final BigDecimal[] misc = billService.getActiveBilledMdAndPfByConsumerNoAndBillMonth(consumerNo, readMaster.getBillMonth());
+                        if (misc != null && misc.length == 2) {
+                            final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(1, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption(), misc[0], misc[1]);
+                            readHistoryInformationList.add(readHistoryInformation);
+                        }
                         xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
                         barChartCurrentYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
                     }
@@ -322,8 +325,11 @@ public class BillNgbTemplateService {
                 if (maxIndex >= 1) {
                     ReadMasterInterface readMaster = readMasterList.get(1);
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(2, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
-                        readHistoryInformationList.add(readHistoryInformation);
+                        final BigDecimal[] misc = billService.getActiveBilledMdAndPfByConsumerNoAndBillMonth(consumerNo, readMaster.getBillMonth());
+                        if (misc != null && misc.length == 2) {
+                            final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(2, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption(), misc[0], misc[1]);
+                            readHistoryInformationList.add(readHistoryInformation);
+                        }
                         xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
                         barChartCurrentYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
                     }
@@ -331,8 +337,11 @@ public class BillNgbTemplateService {
                 if (maxIndex >= 2) {
                     ReadMasterInterface readMaster = readMasterList.get(2);
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(3, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
-                        readHistoryInformationList.add(readHistoryInformation);
+                        final BigDecimal[] misc = billService.getActiveBilledMdAndPfByConsumerNoAndBillMonth(consumerNo, readMaster.getBillMonth());
+                        if (misc != null && misc.length == 2) {
+                            final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(3, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption(), misc[0], misc[1]);
+                            readHistoryInformationList.add(readHistoryInformation);
+                        }
                         xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
                         barChartCurrentYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
                     }
@@ -340,8 +349,11 @@ public class BillNgbTemplateService {
                 if (maxIndex >= 3) {
                     ReadMasterInterface readMaster = readMasterList.get(3);
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(4, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
-                        readHistoryInformationList.add(readHistoryInformation);
+                        final BigDecimal[] misc = billService.getActiveBilledMdAndPfByConsumerNoAndBillMonth(consumerNo, readMaster.getBillMonth());
+                        if (misc != null && misc.length == 2) {
+                            final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(4, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption(), misc[0], misc[1]);
+                            readHistoryInformationList.add(readHistoryInformation);
+                        }
                         xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
                         barChartCurrentYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
                     }
@@ -349,8 +361,11 @@ public class BillNgbTemplateService {
                 if (maxIndex >= 4) {
                     ReadMasterInterface readMaster = readMasterList.get(4);
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(5, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
-                        readHistoryInformationList.add(readHistoryInformation);
+                        final BigDecimal[] misc = billService.getActiveBilledMdAndPfByConsumerNoAndBillMonth(consumerNo, readMaster.getBillMonth());
+                        if (misc != null && misc.length == 2) {
+                            final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(5, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption(), misc[0], misc[1]);
+                            readHistoryInformationList.add(readHistoryInformation);
+                        }
                         xAxisLabels.add(readMaster.getBillMonth().substring(0, 3));
                         barChartCurrentYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
                     }
@@ -363,9 +378,12 @@ public class BillNgbTemplateService {
                 if (lastYearReadMasterInterfaces != null && lastYearReadMasterInterfaces.size() == 1) {
                     ReadMasterInterface readMaster = lastYearReadMasterInterfaces.getFirst();
                     if (readMaster != null) {
-                        final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(6, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption());
-                        readHistoryInformationList.add(readHistoryInformation);
-                        barChartLastYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
+                        final BigDecimal[] misc = billService.getActiveBilledMdAndPfByConsumerNoAndBillMonth(consumerNo, readMaster.getBillMonth());
+                        if (misc != null && misc.length == 2) {
+                            final ReadHistoryInformation readHistoryInformation = new ReadHistoryInformation(6, readMaster.getBillMonth(), readMaster.getReadingDate(), readMaster.getReading(), readMaster.getTotalConsumption(), misc[0], misc[1]);
+                            readHistoryInformationList.add(readHistoryInformation);
+                            barChartLastYearReadList.add(readMaster.getTotalConsumption().setScale(2, RoundingMode.HALF_UP));
+                        }
                     }
                 }
 
@@ -442,7 +460,7 @@ public class BillNgbTemplateService {
             final List<AdjustmentInformation> adjustmentInformationList = new ArrayList<>();
             for (int index = 0; index < adjustmentList.size(); index++) {
                 final AdjustmentInterface adjustment = adjustmentList.get(index);
-                final AdjustmentInformation adjustmentInformation = new AdjustmentInformation(index + 1, adjustmentTypeService.getDescriptionByCode(adjustment.getCode()), adjustment.getAmount());
+                final AdjustmentInformation adjustmentInformation = new AdjustmentInformation(index + 1, adjustment.getCode() + " - " + adjustmentTypeService.getDescriptionByCode(adjustment.getCode()), adjustment.getAmount());
                 adjustmentInformationList.add(adjustmentInformation);
             }
             templateData.setAdjustmentInformationList(adjustmentInformationList);
@@ -455,7 +473,7 @@ public class BillNgbTemplateService {
             for (int index = 0; index < billCalculationLineList.size(); index++) {
                 BillCalculationLineInterface billCalculationLine = billCalculationLineList.get(index);
                 final String slab = (StringUtils.isNotEmpty(billCalculationLine.getStartSlab())) ? billCalculationLine.getStartSlab() + " - " + billCalculationLine.getEndSlab() : "";
-                billCalculationInformationList.add(new BillCalculationInformation(index + 1, billCalculationLine.getHead(), slab, billCalculationLine.getRate(),
+                billCalculationInformationList.add(new BillCalculationInformation(index + 1, GlobalConstant.BILL_CALCULATION_LINE_HEAD_MAPPING.get(billCalculationLine.getHead()), slab, billCalculationLine.getRate(),
                         billCalculationLine.getUnit(), billCalculationLine.getAmount()));
             }
             templateData.setBillCalculationInformationList(billCalculationInformationList);
@@ -556,6 +574,11 @@ public class BillNgbTemplateService {
         if (meterReaderInformation != null) {
             templateData.getBillSummary().setMeterReaderName(meterReaderInformation.getName());
             templateData.getBillSummary().setMeterReaderContactNo(meterReaderInformation.getMobileNo());
+        } else {
+            final ConsumerMiscellaneousInformationInterface meterReaderMiscellaneous = consumerMiscellaneousInformationService.getActivePropertyByConsumerNoAndPropertyName(consumerNo, ConsumerMiscellaneousInformationInterface.PROPERTY_NAME_CURRENT_METER_READER);
+            if (meterReaderMiscellaneous != null) {
+                templateData.getBillSummary().setMeterReaderName(meterReaderMiscellaneous.getPropertyValue());
+            }
         }
 
         return division;
@@ -650,10 +673,30 @@ public class BillNgbTemplateService {
             final Object[] argsTwo = argList.toArray();
             final String messageTwo = billMessageService.getMessageTwo(language, argsTwo);
             if (StringUtils.isNotEmpty(messageTwo)) billMessageList.add(messageTwo);
-
         }
 
         //Message Three
+        /*TODO:if (templateData.getConnectionInformation().isPrepaid()) {
+            final List<AdjustmentInterface> prepaidSDAdjustmentList = ngbAdjustmentService.getByConsumerNoAndCodeAndDeletedAndApprovalStatus(consumerNo, MISConstants.ADJUSTMENT_CODE_PREPAID_CONSUMER_SECURITY_DEPOSIT_REFUND, false, MISConstants.STATUS_APPROVED);
+            final BigDecimal prepaidSDAdjusted = MISUtility.isEmpty(prepaidSDAdjustmentList) ? BigDecimal.ZERO : prepaidSDAdjustmentList.get(0).getAmount();
+            final List<AdjustmentInterface> prepaidAdjustmentList = ngbAdjustmentService.getByConsumerNoAndCodeAndDeletedAndApprovalStatus(consumerNo, MISConstants.ADJUSTMENT_CODE_PREPAID_CONSUMER_ARREAR_INSTALLMENT, false, MISConstants.STATUS_APPROVED);
+            if (!MISUtility.isEmpty(prepaidAdjustmentList)) {
+                BigDecimal totalArrearAmount = BigDecimal.ZERO;
+                BigDecimal unpostedArrearInstallment = BigDecimal.ZERO;
+                BigDecimal installmentAmount = BigDecimal.ZERO;
+                long unpostedCount = 0L;
+                for (AdjustmentInterface adjustment : prepaidAdjustmentList) {
+                    installmentAmount = adjustment.getAmount();
+                    totalArrearAmount = totalArrearAmount.add(adjustment.getAmount());
+                    if (!adjustment.isPosted()) {
+                        unpostedCount++;
+                        unpostedArrearInstallment = unpostedArrearInstallment.add(adjustment.getAmount());
+                    }
+                }
+                billDTO.setPrepaidMessage(String.format(MISConstants.PREPAID_INSTALLMENT_MESSAGE, GlobalResources.getDateInStringFromDate(templateData.getConnectionInformation().getPrepaidDate(), GlobalResources.EXPORT_DATE_FORMAT), prepaidSDAdjusted.toPlainString(), totalArrearAmount.toPlainString(), installmentAmount.toPlainString(), String.valueOf(unpostedCount), unpostedArrearInstallment.toPlainString()));
+            }
+        }*/
+
         final String messageThree = billMessageService.getMessageThree(language);
         if (StringUtils.isNotEmpty(messageThree)) billMessageList.add(messageThree);
 
@@ -683,10 +726,13 @@ public class BillNgbTemplateService {
         final String consumerNo = billIdentifierDTO.getConsumerNo();
         final String billMonth = billIdentifierDTO.getBillMonth();
         boolean isEligibleForTOD = false;
-        final boolean isNetMeter = templateData.getConnectionInformation().isNetMeter();
         final ReadInformation readInformation = new ReadInformation();
         final Sort sort = GlobalUtil.getSortObject(SortOrder.DESC);
-        final List<ReadMasterInterface> readMasterList = readMasterService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(consumerNo, billMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, true, sort);
+        List<ReadMasterInterface> readMasterList = readMasterService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(consumerNo, billMonth, ReadMasterInterface.REPLACEMENT_FLAG_NORMAL_READ, true, sort);
+        if ((readMasterList == null || readMasterList.size() == 0) && "Last Bill".equals(templateData.getBillSummary().getBillType())) {
+            readMasterList = readMasterService.getByConsumerNoAndBillMonthAndReplacementFlagAndUsedOnBill(consumerNo, billMonth, ReadMasterInterface.REPLACEMENT_FLAG_FINAL_READ, true, sort);
+        }
+
         if (readMasterList != null && readMasterList.size() == 1) {
             ReadMasterInterface readMaster = readMasterList.getFirst();
             readInformation.setType(readMaster.getReadingType());
@@ -911,7 +957,7 @@ public class BillNgbTemplateService {
         final boolean isNetMeter = templateData.getConnectionInformation().isNetMeter();
 
         final List<ConsumerMeterMappingInterface> meterMappingList = consumerMeterMappingService.getByConsumerNoAndBillMonthOrderByInstallationDateDescIdDesc(consumerNo, billMonth);
-        if (GlobalUtil.isEmpty(meterMappingList)) return;
+        if (meterMappingList == null || meterMappingList.size() <= 1) return;
 
         final MeterReplacementInformation meterReplacementInformation = new MeterReplacementInformation();
 

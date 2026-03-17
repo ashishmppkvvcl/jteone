@@ -11,6 +11,8 @@ public class ReadHistoryInformation {
     private LocalDate readDate;
     private BigDecimal reading;
     private BigDecimal unit;
+    private BigDecimal billedMd;
+    private BigDecimal billedPf;
 
     public int getIndex() {
         return index;
@@ -52,14 +54,32 @@ public class ReadHistoryInformation {
         this.billMonth = billMonth;
     }
 
+    public BigDecimal getBilledMd() {
+        return billedMd;
+    }
+
+    public void setBilledMd(BigDecimal billedMd) {
+        this.billedMd = billedMd;
+    }
+
+    public BigDecimal getBilledPf() {
+        return billedPf;
+    }
+
+    public void setBilledPf(BigDecimal billedPf) {
+        this.billedPf = billedPf;
+    }
+
     public ReadHistoryInformation() {
     }
 
-    public ReadHistoryInformation(int index, String billMonth, LocalDate readDate, BigDecimal reading, BigDecimal unit) {
+    public ReadHistoryInformation(int index, String billMonth, LocalDate readDate, BigDecimal reading, BigDecimal unit, BigDecimal billedMd, BigDecimal billedPf) {
         this.index = index;
         this.billMonth = billMonth;
         this.readDate = readDate;
         this.reading = reading;
         this.unit = unit;
+        this.billedMd = billedMd;
+        this.billedPf = billedPf;
     }
 }

@@ -6,6 +6,8 @@ import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class BillService {
 
@@ -18,9 +20,15 @@ public class BillService {
         return billDAO.getMaxBillMonthByConsumerNoAndDeleted(consumerNo, deleted);
     }
 
-    public BillInterface getByConsumerNoAndBillMonthAndDeleted(String consumerNo, String billMonth, boolean deleted) {
+    public BillInterface getActiveByConsumerNoAndBillMonth(String consumerNo, String billMonth) {
         if (consumerNo == null || billMonth == null) return null;
 
-        return billDAO.getByConsumerNoAndBillMonthAndDeleted(consumerNo, billMonth, deleted);
+        return billDAO.getActiveByConsumerNoAndBillMonth(consumerNo, billMonth);
+    }
+
+    public BigDecimal[] getActiveBilledMdAndPfByConsumerNoAndBillMonth(String consumerNo, String billMonth) {
+        if (consumerNo == null || billMonth == null) return null;
+
+        return billDAO.getActiveBilledMdAndPfByConsumerNoAndBillMonth(consumerNo, billMonth);
     }
 }

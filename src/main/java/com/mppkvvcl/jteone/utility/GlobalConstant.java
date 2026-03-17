@@ -1,6 +1,9 @@
 package com.mppkvvcl.jteone.utility;
 
+import com.mppkvvcl.ngbdao.interfaces.BillCalculationLineInterface;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 public class GlobalConstant {
@@ -22,4 +25,6 @@ public class GlobalConstant {
     public static final String APPROVED = "APPROVED";
     public static final String PENDING = "PENDING";
     public static final String REJECTED = "REJECTED";
+
+    public static final Map<String, String> BILL_CALCULATION_LINE_HEAD_MAPPING = Map.of(BillCalculationLineInterface.HEAD_ENERGY_CHARGE, "ENERGY CHARGE", BillCalculationLineInterface.HEAD_FIXED_CHARGE, "FIXED CHARGE");
 }
