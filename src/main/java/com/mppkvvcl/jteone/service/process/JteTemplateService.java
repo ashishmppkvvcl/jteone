@@ -35,7 +35,7 @@ public class JteTemplateService {
             final TemplateEngine templateEngine = jteConfiguration.getTemplateEngine();
             templateEngine.render(path, jteTemplate, output);
         } catch (TemplateException templateException) {
-            log.error("Template exception occurred", templateException);
+            log.error("Template not found. Exception occurred.", templateException);
         }
 
         return output.toByteArray();

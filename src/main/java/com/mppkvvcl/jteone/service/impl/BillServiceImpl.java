@@ -73,7 +73,7 @@ public class BillServiceImpl {
             final String billMonth = billIdentifierDTO.getBillMonth();
             final String propertyValue = configuratorService.getValueByPropertyName(ConfiguratorInterface.PROPERTY_NAME_AGRICULTURE_BILLING_CYCLE_MONTHS);
             if (!StringUtils.isEmpty(propertyValue)) {
-                final String[] months = propertyValue.split(",");
+                final String[] months = propertyValue.split(", ");
                 if (Arrays.asList(months).contains(billIdentifierDTO.getBillMonth().substring(0, 3))) {
                     return downloadFRT6MonthlyBill(billIdentifierDTO, fileFormat, messageDTO);
                 }
@@ -120,9 +120,10 @@ public class BillServiceImpl {
 
         final BillIdentifierDTO billIdentifierDTO = consumerConnectionInformationService.getForBillIdentifierByConsumerNo(consumerNo);
         if (billIdentifierDTO != null && billIdentifierDTO.isFRT6MonthlyConsumer()) {
+            billIdentifierDTO.setBillMonth(billMonth);
             final String propertyValue = configuratorService.getValueByPropertyName(ConfiguratorInterface.PROPERTY_NAME_AGRICULTURE_BILLING_CYCLE_MONTHS);
             if (!StringUtils.isEmpty(propertyValue)) {
-                final String[] months = propertyValue.split(",");
+                final String[] months = propertyValue.split(", ");
                 if (Arrays.asList(months).contains(billIdentifierDTO.getBillMonth().substring(0, 3))) {
                     return downloadFRT6MonthlyBill(billIdentifierDTO, fileFormat, messageDTO);
                 }
