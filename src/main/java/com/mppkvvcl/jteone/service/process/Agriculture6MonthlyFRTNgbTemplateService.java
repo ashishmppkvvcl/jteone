@@ -236,8 +236,12 @@ public class Agriculture6MonthlyFRTNgbTemplateService {
             return null;
         }
 
-        final String billDuration = billMasterAgricultureService.getBillDuration(billMonth);
-        Long unpostedPayment = paymentService.getAmountByConsumerNoAndPostingBillMonthAndPostedDeleted(consumerNo, billMonth, false, false);
+        final List<String> billMonths = billMasterAgricultureService.getAgricultureBillMonthsForCycle(billMonth);
+        String billDuration = billMonth;
+        if (!GlobalUtil.isEmpty(billMonths)) {
+            billDuration = billMonths.get(0) + " TO " + billMonths.get(billMonths.size() - 1);
+        }
+        Long unpostedPayment = paymentService.getAmountByConsumerNoAndPostingBillMonthInAndDeleted(consumerNo, billMonths, false);
         if (unpostedPayment == null) unpostedPayment = 0L;
         BigDecimal payableAmount = GlobalUtil.subtract(bill.getNetBill(), new BigDecimal(unpostedPayment));//.setScale(0, RoundingMode.HALF_UP));
         BigDecimal payableBeforeDueDate = payableAmount;

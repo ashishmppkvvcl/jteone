@@ -1,5 +1,6 @@
 package com.mppkvvcl.jteone.service.daos.ngb;
 
+import com.mppkvvcl.jteone.utility.GlobalUtil;
 import com.mppkvvcl.ngbdao.daos.PaymentDAO;
 import com.mppkvvcl.ngbdao.interfaces.PaymentInterface;
 import org.apache.commons.lang3.StringUtils;
@@ -29,5 +30,11 @@ public class PaymentService {
             return null;
 
         return paymentDAO.getAmountByConsumerNoAndPostingBillMonthAndPostedDeleted(consumerNo, postingBillMonth, posted, deleted);
+    }
+
+    public Long getAmountByConsumerNoAndPostingBillMonthInAndDeleted(String consumerNo, List<String> postingBillMonths, boolean deleted) {
+        if (StringUtils.isEmpty(consumerNo) || GlobalUtil.isEmpty(postingBillMonths)) return null;
+
+        return paymentDAO.getAmountByConsumerNoAndPostingBillMonthInAndDeleted(consumerNo, postingBillMonths, deleted);
     }
 }

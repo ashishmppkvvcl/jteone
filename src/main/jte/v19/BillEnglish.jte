@@ -412,7 +412,8 @@
                     <div class="company-subtitle">(Wholly owned by Govt. of M.P.)</div>
                     <div class="tagline">
                         <a href="${companyInfo.getWebsite()}" target="_blank">Website: ${companyInfo.getWebsite()}</a> |
-                        <a href="tel:${companyInfo.getCustomerCareNumber()}">Call Centre No. ${companyInfo.getCustomerCareNumber()}</a>
+                        <a href="tel:${companyInfo.getCustomerCareNumber()}">Call Centre
+                            No. ${companyInfo.getCustomerCareNumber()}</a>
                     </div>
                     <div class="tagline">
                         GST No: <strong>${companyInfo.getGstNo()}</strong> |
@@ -610,7 +611,7 @@
                         @else
                             <td style="width:25%;">
                                 <span class="lbl">CUSTOMER CARE</span>
-                                <span class="val">1912</span>
+                                <span class="val">${companyInfo.getCustomerCareNumber()}</span>
                             </td>
                         @endif
                     </tr>
@@ -745,7 +746,7 @@
                             <span class="lbl">VNM / GNM</span>
                             <span class="val">@if(connectionInfo.isNetMeterChild()) CHILD
                                 @elseif(connectionInfo.isNetMeterParent()) PARENT @endif
-                        </span>
+                            </span>
                         </td>
                         <td></td>
                         <td></td>
@@ -756,73 +757,75 @@
         </div>
     @endif
 
-    @if(connectionInfo.isNetMeter() && readInfo.getReadDetailList() != null && readInfo.getReadDetailList().size() >= 2)
+    @if(connectionInfo.isNetMeter() && readInfo.getReadDetailList() != null && !readInfo.getReadDetailList().isEmpty())
         <div class="box pad-6">
-        <table class="reading-table">
-            <thead>
-            <tr>
-                <th>Particulars</th>
-                <th class="right">Current Reading</th>
-                <th class="right">Previous Reading</th>
-                <th class="right">M.F.</th>
-                <th class="right">Metered Units</th>
-                <th class="right">Assessed Units</th>
-                <th class="right">Final Consumption</th>
-            </tr>
-            </thead>
-            <tbody>
-            !{var importRead = readInfo.getReadDetailList().getFirst();}
-            !{var exportRead = readInfo.getReadDetailList().get(1);}
-            <tr>
-                <td>IMPORT</td>
-                <td class="right"><b>${JteUtil.get(importRead.getCurrentRead())}</b></td>
-                <td class="right"><b>${JteUtil.get(importRead.getPreviousRead())}</b></td>
-                <td class="right"><b>${JteUtil.get(importRead.getMf())}</b></td>
-                <td class="right"><b>${JteUtil.get(importRead.getMeteredUnit())}</b></td>
-                <td class="right"><b>${JteUtil.get(importRead.getAssessment())}</b></td>
-                <td class="right"><b>${JteUtil.get(importRead.getBilledUnit())}</b></td>
-            </tr>
-            <tr>
-                <td>EXPORT</td>
-                <td class="right"><b>${JteUtil.get(exportRead.getCurrentRead())}</b></td>
-                <td class="right"><b>${JteUtil.get(exportRead.getPreviousRead())}</b></td>
-                <td class="right"><b>${JteUtil.get(exportRead.getMf())}</b></td>
-                <td class="right"><b>${JteUtil.get(exportRead.getMeteredUnit())}</b></td>
-                <td class="right"><b>${JteUtil.get(exportRead.getAssessment())}</b></td>
-                <td class="right"><b>${JteUtil.get(exportRead.getBilledUnit())}</b></td>
-            </tr>
-            <tr class="row-highlight">
-                <td colspan="4" style="text-align:center;">Residual Units Adjusted</td>
-                <td class="right" colspan="3">${JteUtil.get(readInfo.getResidualUnitAdjusted())}</td>
-            </tr>
-            <tr class="row-total">
-                <td colspan="4" style="text-align:center;">Net</td>
-                <td class="right">${JteUtil.get(readInfo.getNetMeteredUnit())}</td>
-                <td class="right"></td>
-                <td class="right">${JteUtil.get(readInfo.getNetBilledUnit())}</td>
-            </tr>
-            </tbody>
-        </table>
-    @elseif(readInfo.getReadDetailList() != null && readInfo.getReadDetailList().size() == 1)
-        !{var read = readInfo.getReadDetailList().getFirst();}
-        <table class="tight">
-            <tr>
-                <th class="right">Current Reading</th>
-                <th class="right">Previous Reading</th>
-                <th class="right">M.F.</th>
-                <th class="right">Metered Units</th>
-                <th class="right">Assessed Units</th>
-                <th class="right">Total Units</th>
-            </tr>
-            <tr>
-                <td class="right"><b>${JteUtil.get(read.getCurrentRead())}</b></td>
-                <td class="right"><b>${JteUtil.get(read.getPreviousRead())}</b></td>
-                <td class="right"><b>${JteUtil.get(read.getMf())}</b></td>
-                <td class="right"><b>${JteUtil.get(read.getMeteredUnit())}</b></td>
-                <td class="right"><b>${JteUtil.get(read.getAssessment())}</b></td>
-                <td class="right"><b>${JteUtil.get(read.getBilledUnit())}</b></td>
-            </tr>
-        </table>
+            @if(connectionInfo.isNetMeter() && readInfo.getReadDetailList() != null && readInfo.getReadDetailList().size() >= 2)
+                <table class="reading-table">
+                    <thead>
+                    <tr>
+                        <th>Particulars</th>
+                        <th class="right">Current Reading</th>
+                        <th class="right">Previous Reading</th>
+                        <th class="right">M.F.</th>
+                        <th class="right">Metered Units</th>
+                        <th class="right">Assessed Units</th>
+                        <th class="right">Final Consumption</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    !{var importRead = readInfo.getReadDetailList().getFirst();}
+                    !{var exportRead = readInfo.getReadDetailList().get(1);}
+                    <tr>
+                        <td>IMPORT</td>
+                        <td class="right"><b>${JteUtil.get(importRead.getCurrentRead())}</b></td>
+                        <td class="right"><b>${JteUtil.get(importRead.getPreviousRead())}</b></td>
+                        <td class="right"><b>${JteUtil.get(importRead.getMf())}</b></td>
+                        <td class="right"><b>${JteUtil.get(importRead.getMeteredUnit())}</b></td>
+                        <td class="right"><b>${JteUtil.get(importRead.getAssessment())}</b></td>
+                        <td class="right"><b>${JteUtil.get(importRead.getBilledUnit())}</b></td>
+                    </tr>
+                    <tr>
+                        <td>EXPORT</td>
+                        <td class="right"><b>${JteUtil.get(exportRead.getCurrentRead())}</b></td>
+                        <td class="right"><b>${JteUtil.get(exportRead.getPreviousRead())}</b></td>
+                        <td class="right"><b>${JteUtil.get(exportRead.getMf())}</b></td>
+                        <td class="right"><b>${JteUtil.get(exportRead.getMeteredUnit())}</b></td>
+                        <td class="right"><b>${JteUtil.get(exportRead.getAssessment())}</b></td>
+                        <td class="right"><b>${JteUtil.get(exportRead.getBilledUnit())}</b></td>
+                    </tr>
+                    <tr class="row-highlight">
+                        <td colspan="4" style="text-align:center;">Residual Units Adjusted</td>
+                        <td class="right" colspan="3">${JteUtil.get(readInfo.getResidualUnitAdjusted())}</td>
+                    </tr>
+                    <tr class="row-total">
+                        <td colspan="4" style="text-align:center;">Net</td>
+                        <td class="right">${JteUtil.get(readInfo.getNetMeteredUnit())}</td>
+                        <td class="right"></td>
+                        <td class="right">${JteUtil.get(readInfo.getNetBilledUnit())}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            @elseif(readInfo.getReadDetailList() != null && readInfo.getReadDetailList().size() == 1)
+                !{var read = readInfo.getReadDetailList().getFirst();}
+                <table class="tight">
+                    <tr>
+                        <th class="right">Current Reading</th>
+                        <th class="right">Previous Reading</th>
+                        <th class="right">M.F.</th>
+                        <th class="right">Metered Units</th>
+                        <th class="right">Assessed Units</th>
+                        <th class="right">Total Units</th>
+                    </tr>
+                    <tr>
+                        <td class="right"><b>${JteUtil.get(read.getCurrentRead())}</b></td>
+                        <td class="right"><b>${JteUtil.get(read.getPreviousRead())}</b></td>
+                        <td class="right"><b>${JteUtil.get(read.getMf())}</b></td>
+                        <td class="right"><b>${JteUtil.get(read.getMeteredUnit())}</b></td>
+                        <td class="right"><b>${JteUtil.get(read.getAssessment())}</b></td>
+                        <td class="right"><b>${JteUtil.get(read.getBilledUnit())}</b></td>
+                    </tr>
+                </table>
+            @endif
         </div>
     @endif
 
@@ -870,9 +873,7 @@
                 </tr>
 
                 <tr>
-                    <td colspan="2" style="background:var(--soft2); font-weight:900;text-align: right;">Rebate /
-                        Charges
-                    </td>
+                    <td colspan="2" style="background:var(--soft2); font-weight:900;text-align: right;">Rebate / Charges</td>
                 </tr>
                 <tr>
                     <td>Penal Charge (+)</td>
@@ -1019,7 +1020,6 @@
         <div class="page-footer-right">Page 2 of 4</div>
     </div>
 </div>
-
 
 <!-- PAGE 3 -->
 <div class="page">
@@ -1401,9 +1401,7 @@
     @endif
 
     @if(!GlobalUtil.isEmpty(billTemplate.getEcgrfInformationList()))
-        <div class="band-title" style="margin-top:6px;">CIRCLE LEVEL ELECTRICITY CONSUMERS GRIEVANCE REDRESSAL FORUM
-            (ECGRF)
-        </div>
+        <div class="band-title" style="margin-top:6px;">CIRCLE LEVEL ELECTRICITY CONSUMERS GRIEVANCE REDRESSAL FORUM (ECGRF)</div>
         <div class="table-scroll">
             <table class="reading-table">
                 <thead>
