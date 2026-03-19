@@ -25,7 +25,7 @@ public class JteTemplateService {
         if (StringUtils.isNotEmpty(subdirectory)) {
             path = path.concat(subdirectory);
         }
-        path = path.concat("/").concat(StringUtils.capitalize(templateName.toLowerCase()));
+        path = path.concat("/").concat(StringUtils.capitalize(templateName));
         if (StringUtils.isNotEmpty(purpose)) {
             path = path.concat(StringUtils.capitalize(purpose.toLowerCase())).concat(".class");
         }

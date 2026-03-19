@@ -1,6 +1,7 @@
 package com.mppkvvcl.jteone.service.daos.ngb;
 
 import com.mppkvvcl.ngbdao.daos.ConsumerConnectionInformationDAO;
+import com.mppkvvcl.ngbdao.dtos.BillIdentifierDTO;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,5 +16,11 @@ public class ConsumerConnectionInformationService {
         if (StringUtils.isEmpty(consumerNo)) return null;
 
         return consumerConnectionInformationDAO.getForBillTemplateByConsumerNo(consumerNo);
+    }
+
+    public BillIdentifierDTO getForBillIdentifierByConsumerNo(String consumerNo) {
+        if (StringUtils.isEmpty(consumerNo)) return null;
+
+        return consumerConnectionInformationDAO.getForBillIdentifierByConsumerNo(consumerNo);
     }
 }

@@ -27,6 +27,11 @@ public class BillTemplate implements JteTemplateInterface {
     private List<ECGRFInformation> ecgrfInformationList;
     private AdvertisementInformation advertisementInformation;
 
+    @Override
+    public String getConsumerNo() {
+        return consumerInformation == null ? null : consumerInformation.getConsumerNo();
+    }
+
     public TemplateInformation getTemplateInformation() {
         return templateInformation;
     }

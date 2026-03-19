@@ -11,7 +11,10 @@ public class HtmlToPdfService {
     private static final Logger log = LoggerFactory.getLogger(HtmlToPdfService.class);
 
     @Autowired
-    private HtmlToPdfWkOpenService htmlToPdfWkOpenService;
+    private WkHtmlToPdfService wkHtmlToPdfService;
+
+    @Autowired
+    private PlayWrightService playWrightService;
 
     @Value("${html.pdf.vendor}")
     private String htmlToPdfConversionVendor;
@@ -22,7 +25,15 @@ public class HtmlToPdfService {
         byte[] out = null;
         if ("WKHtmlToPdf".equalsIgnoreCase(htmlToPdfConversionVendor)) {
             try {
-                out = htmlToPdfWkOpenService.getPdfFromHtml(htmlContent);
+                out = wkHtmlToPdfService.getPdfFromHtml(htmlContent);
+
+            } catch (Exception exception) {
+                log.error("ERROR ALERT:: AFTER RETRY:: Exception occurred while converting HTML to PDF", exception);
+            }
+        }
+        if ("PlayWright".equalsIgnoreCase(htmlToPdfConversionVendor)) {
+            try {
+                out = playWrightService.getPdfFromHtml(htmlContent);
 
             } catch (Exception exception) {
                 log.error("ERROR ALERT:: AFTER RETRY:: Exception occurred while converting HTML to PDF", exception);

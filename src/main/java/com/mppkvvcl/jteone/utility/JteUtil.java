@@ -19,6 +19,13 @@ public class JteUtil {
         return val.setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
 
+    // Check null & convert BigDecimal and return
+    public static String get(final BigDecimal val, int roundScale) {
+        if (val == null || roundScale <= 0) return null;
+
+        return val.setScale(roundScale, RoundingMode.HALF_UP).toPlainString();
+    }
+
     // Check null & convert Date to String and return
     public static String get(final LocalDate val) {
         if (val == null) return null;

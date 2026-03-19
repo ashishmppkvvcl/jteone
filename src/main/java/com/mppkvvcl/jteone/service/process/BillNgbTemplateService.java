@@ -10,8 +10,8 @@ import com.mppkvvcl.jteone.service.daos.ngb.*;
 import com.mppkvvcl.jteone.utility.GlobalConstant;
 import com.mppkvvcl.jteone.utility.GlobalUtil;
 import com.mppkvvcl.jteone.utility.UrjasCypher;
-import com.mppkvvcl.misdao.dtos.BillIdentifierDTO;
 import com.mppkvvcl.misdao.interfaces.DiscomInterface;
+import com.mppkvvcl.ngbdao.dtos.BillIdentifierDTO;
 import com.mppkvvcl.ngbdao.interfaces.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -189,7 +189,7 @@ public class BillNgbTemplateService {
         }
 
         String billBasis = null;
-        if (billIdentifierDTO.isCC4()) billBasis = "Revised Bill";
+        //if (billIdentifierDTO.isCC4()) billBasis = "Revised Bill";
         final SecurityDepositInterface securityDeposit = securityDepositService.getConsumerNoAndEffectiveStartDateAndEffectiveEndDateOrderByIdAsc(consumerNo, bill.getBillDate());
         final BigDecimal sdHeld = (securityDeposit != null) ? securityDeposit.getAmount() : BigDecimal.ZERO;
         final BigDecimal wheelingCharges = ngbAdjustmentService.getAmountByConsumerNoAndCodeAndPostingBillMonthAndApprovalStatusAndPostedAndDeleted(consumerNo, AdjustmentInterface.WHEELING_CHARGES, billMonth, GlobalConstant.APPROVED, true, false);
@@ -252,6 +252,8 @@ public class BillNgbTemplateService {
                 bill.getDueDate(), bill.getChequeDueDate(), bill.getBilledUnit(), null, null,
                 bill.getBillDate(), billType, billBasis, null, null, sdHeld, bill.getAsdArrear(), pdcDate);
 
+        final BigDecimal displayArrear = GlobalUtil.subtract(bill.getArrear(), GlobalUtil.subtract(bill.getCumulativeSurcharge(), bill.getSurchargeDemanded()), bill.getAsdArrear());
+
         final BigDecimal subTotalOne = GlobalUtil.add(bill.getEnergyCharge(), bill.getFcaCharge(), bill.getFixedCharge());
         final BigDecimal subTotalTwo = GlobalUtil.add(bill.getElectricityDuty(), bill.getCcbAdjustment());
         final BigDecimal penalCharge = GlobalUtil.add(bill.getAdditionalFixedCharges1(), bill.getAdditionalFixedCharges2());
@@ -261,7 +263,7 @@ public class BillNgbTemplateService {
         final BillInformation billInformation = new BillInformation(bill.getEnergyCharge(), bill.getFcaCharge(), bill.getFixedCharge(), subTotalOne, bill.getElectricityDuty(), bill.getCcbAdjustment(), subTotalTwo,
                 penalCharge, bill.getPfCharge(), bill.getAsdInstallment(), todSurchargeAndRebate, bill.getSdInterest(), bill.getLoadFactorIncentive(), bill.getLockCredit(), bill.getEmployeeRebate(), bill.getPrepaidMeterRebate(),
                 bill.getOnlinePaymentRebate(), bill.getPromptPaymentIncentive(), bill.getAdvancePaymentIncentive(), bill.getDemandSideIncentive(), wheelingCharges == null ? BigDecimal.ZERO : wheelingCharges, subTotalThree,
-                bill.getSubsidy(), subTotalFour, bill.getArrear(), bill.getCumulativeSurcharge(), bill.getAsdArrear(), bill.getNetBill(), unpostedPayment, rcdcAmount == null ? 0L : rcdcAmount.longValue(),
+                bill.getSubsidy(), subTotalFour, displayArrear, bill.getCumulativeSurcharge(), bill.getAsdArrear(), bill.getNetBill(), unpostedPayment, rcdcAmount == null ? 0L : rcdcAmount.longValue(),
                 vigilenceEnergyCharge, vigilenceSurcharge, payableTotalingAmount, bill.getBilledPF(), bill.getBilledMD(), bill.getPreviousRead(), bill.getMeteredUnit(), bill.getCurrentRead(), bill.getSurchargeDemanded());
 
         templateData.setBillSummary(billSummary);

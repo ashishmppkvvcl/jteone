@@ -78,9 +78,7 @@ public class BillMessageService {
             }
         }
 
-        final String name = billMessagesNameByHeader.get(BillMessageInterface.HEADER_MESSAGE_THREE) != null ?
-                billMessagesNameByHeader.get(BillMessageInterface.HEADER_MESSAGE_THREE).getFirst().getName() : null;
-        return getMessage(name, language, args);
+        return getPrepaidMessage(language, args);
     }
 
     private String getMessage(String messageName, final String language, Object[] args) {
@@ -109,5 +107,11 @@ public class BillMessageService {
             message = getMessage(BillMessageInterface.MESSAGE_NAME_OTS_DEFAULTER, language, args);
         }
         return message;
+    }
+
+    private String getPrepaidMessage(final String language, final Object... args) {
+        if (language == null || args == null || args.length == 0) return null;
+
+        return getMessage(BillMessageInterface.MESSAGE_NAME_OTS_DEFAULTER, language, args);
     }
 }

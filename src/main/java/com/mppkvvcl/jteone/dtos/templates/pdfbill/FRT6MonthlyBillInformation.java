@@ -1,234 +1,144 @@
 package com.mppkvvcl.jteone.dtos.templates.pdfbill;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class FRT6MonthlyBillInformation {
 
     private String billDuration;
 
+    private String paymentQuickResponseString;
+    private String paymentQuickResponseBase64;
 
-    private BigDecimal energyCharge;
-    private BigDecimal fppas;
-    private BigDecimal fixedCharge;
+    private LocalDate billDate;
+    private LocalDate dueDate;
+    private LocalDate chequeDueDate;
+
+    private BigDecimal sdHeld;
+
+    private String billNo;
+    private String billMonth;
+    private BigDecimal payableAmount;
+    private BigDecimal payableTillDueDate;
+    private BigDecimal payableAfterDueDate;
+
+    private BigDecimal actualBill;
+    private BigDecimal subsidy;
+    private BigDecimal currentBill;
+    private BigDecimal arrear;
+    private BigDecimal surchargeDemanded;
+    private BigDecimal ccbAdjustment;
     private BigDecimal subTotalOne;
 
-    private BigDecimal electricityDuty;
-    private BigDecimal ccbAdjustment;
-    private BigDecimal subTotalTwo;
-
-    private BigDecimal penalCharge;
-    private BigDecimal pfSurchargeOrIncentive;
-    private BigDecimal asdInstallment;
-    private BigDecimal todRebateOrSurcharge;
-    private BigDecimal sdInterest;
-    private BigDecimal locdFactorIncentive;
-    private BigDecimal lockCredit;
-    private BigDecimal employeeRebate;
-    private BigDecimal prepaidPaymentRebate;
-    private BigDecimal onlinePaymentRebate;
-    private BigDecimal promptPaymentIncentive;
-    private BigDecimal advancePaymentIncentive;
-    private BigDecimal demandSideIncentive;
-    private BigDecimal wheelingCharge;
-    private BigDecimal subTotalThree;
-
-    private BigDecimal subsidy;
-    private BigDecimal subTotalFour;
-
-    private BigDecimal principalArrear;
-    private BigDecimal cumulativeSurcharge;
-    private BigDecimal asdArrear;
+    private long unpostedPayment;
     private BigDecimal netBill;
 
-    private Long paymentForBillAndVigilance;
-    private Long paymentForSmartMeterRCDC;
+    private BigDecimal ots2025SurchargeWaiver;
+    private BigDecimal ots2025UnpostedInstallmentAmount;
+    private BigDecimal ots2025postedInstallmentAmount;
 
-    private BigDecimal vigilanceDueAmount;
-    private BigDecimal vigilanceDueInterestAmount;
-
-    private BigDecimal totalPayableAmount;
-
-    private BigDecimal pf;
-    private BigDecimal md;
-    private BigDecimal previousRead;
-    private BigDecimal meteredUnit;
-    private BigDecimal currentRead;
-    private BigDecimal surchargeDemanded;
-
-    public BigDecimal getEnergyCharge() {
-        return energyCharge;
+    public String getBillDuration() {
+        return billDuration;
     }
 
-    public void setEnergyCharge(BigDecimal energyCharge) {
-        this.energyCharge = energyCharge;
+    public void setBillDuration(String billDuration) {
+        this.billDuration = billDuration;
     }
 
-    public BigDecimal getFppas() {
-        return fppas;
+    public String getPaymentQuickResponseString() {
+        return paymentQuickResponseString;
     }
 
-    public void setFppas(BigDecimal fppas) {
-        this.fppas = fppas;
+    public void setPaymentQuickResponseString(String paymentQuickResponseString) {
+        this.paymentQuickResponseString = paymentQuickResponseString;
     }
 
-    public BigDecimal getFixedCharge() {
-        return fixedCharge;
+    public String getPaymentQuickResponseBase64() {
+        return paymentQuickResponseBase64;
     }
 
-    public void setFixedCharge(BigDecimal fixedCharge) {
-        this.fixedCharge = fixedCharge;
+    public void setPaymentQuickResponseBase64(String paymentQuickResponseBase64) {
+        this.paymentQuickResponseBase64 = paymentQuickResponseBase64;
     }
 
-    public BigDecimal getSubTotalOne() {
-        return subTotalOne;
+    public LocalDate getBillDate() {
+        return billDate;
     }
 
-    public void setSubTotalOne(BigDecimal subTotalOne) {
-        this.subTotalOne = subTotalOne;
+    public void setBillDate(LocalDate billDate) {
+        this.billDate = billDate;
     }
 
-    public BigDecimal getElectricityDuty() {
-        return electricityDuty;
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 
-    public void setElectricityDuty(BigDecimal electricityDuty) {
-        this.electricityDuty = electricityDuty;
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 
-    public BigDecimal getCcbAdjustment() {
-        return ccbAdjustment;
+    public LocalDate getChequeDueDate() {
+        return chequeDueDate;
     }
 
-    public void setCcbAdjustment(BigDecimal ccbAdjustment) {
-        this.ccbAdjustment = ccbAdjustment;
+    public void setChequeDueDate(LocalDate chequeDueDate) {
+        this.chequeDueDate = chequeDueDate;
     }
 
-    public BigDecimal getSubTotalTwo() {
-        return subTotalTwo;
+    public BigDecimal getSdHeld() {
+        return sdHeld;
     }
 
-    public void setSubTotalTwo(BigDecimal subTotalTwo) {
-        this.subTotalTwo = subTotalTwo;
+    public void setSdHeld(BigDecimal sdHeld) {
+        this.sdHeld = sdHeld;
     }
 
-    public BigDecimal getPenalCharge() {
-        return penalCharge;
+    public String getBillNo() {
+        return billNo;
     }
 
-    public void setPenalCharge(BigDecimal penalCharge) {
-        this.penalCharge = penalCharge;
+    public void setBillNo(String billNo) {
+        this.billNo = billNo;
     }
 
-    public BigDecimal getPfSurchargeOrIncentive() {
-        return pfSurchargeOrIncentive;
+    public String getBillMonth() {
+        return billMonth;
     }
 
-    public void setPfSurchargeOrIncentive(BigDecimal pfSurchargeOrIncentive) {
-        this.pfSurchargeOrIncentive = pfSurchargeOrIncentive;
+    public void setBillMonth(String billMonth) {
+        this.billMonth = billMonth;
     }
 
-    public BigDecimal getAsdInstallment() {
-        return asdInstallment;
+    public BigDecimal getPayableAmount() {
+        return payableAmount;
     }
 
-    public void setAsdInstallment(BigDecimal asdInstallment) {
-        this.asdInstallment = asdInstallment;
+    public void setPayableAmount(BigDecimal payableAmount) {
+        this.payableAmount = payableAmount;
     }
 
-    public BigDecimal getTodRebateOrSurcharge() {
-        return todRebateOrSurcharge;
+    public BigDecimal getPayableTillDueDate() {
+        return payableTillDueDate;
     }
 
-    public void setTodRebateOrSurcharge(BigDecimal todRebateOrSurcharge) {
-        this.todRebateOrSurcharge = todRebateOrSurcharge;
+    public void setPayableTillDueDate(BigDecimal payableTillDueDate) {
+        this.payableTillDueDate = payableTillDueDate;
     }
 
-    public BigDecimal getSdInterest() {
-        return sdInterest;
+    public BigDecimal getPayableAfterDueDate() {
+        return payableAfterDueDate;
     }
 
-    public void setSdInterest(BigDecimal sdInterest) {
-        this.sdInterest = sdInterest;
+    public void setPayableAfterDueDate(BigDecimal payableAfterDueDate) {
+        this.payableAfterDueDate = payableAfterDueDate;
     }
 
-    public BigDecimal getLocdFactorIncentive() {
-        return locdFactorIncentive;
+    public BigDecimal getActualBill() {
+        return actualBill;
     }
 
-    public void setLocdFactorIncentive(BigDecimal locdFactorIncentive) {
-        this.locdFactorIncentive = locdFactorIncentive;
-    }
-
-    public BigDecimal getLockCredit() {
-        return lockCredit;
-    }
-
-    public void setLockCredit(BigDecimal lockCredit) {
-        this.lockCredit = lockCredit;
-    }
-
-    public BigDecimal getEmployeeRebate() {
-        return employeeRebate;
-    }
-
-    public void setEmployeeRebate(BigDecimal employeeRebate) {
-        this.employeeRebate = employeeRebate;
-    }
-
-    public BigDecimal getPrepaidPaymentRebate() {
-        return prepaidPaymentRebate;
-    }
-
-    public void setPrepaidPaymentRebate(BigDecimal prepaidPaymentRebate) {
-        this.prepaidPaymentRebate = prepaidPaymentRebate;
-    }
-
-    public BigDecimal getOnlinePaymentRebate() {
-        return onlinePaymentRebate;
-    }
-
-    public void setOnlinePaymentRebate(BigDecimal onlinePaymentRebate) {
-        this.onlinePaymentRebate = onlinePaymentRebate;
-    }
-
-    public BigDecimal getPromptPaymentIncentive() {
-        return promptPaymentIncentive;
-    }
-
-    public void setPromptPaymentIncentive(BigDecimal promptPaymentIncentive) {
-        this.promptPaymentIncentive = promptPaymentIncentive;
-    }
-
-    public BigDecimal getAdvancePaymentIncentive() {
-        return advancePaymentIncentive;
-    }
-
-    public void setAdvancePaymentIncentive(BigDecimal advancePaymentIncentive) {
-        this.advancePaymentIncentive = advancePaymentIncentive;
-    }
-
-    public BigDecimal getDemandSideIncentive() {
-        return demandSideIncentive;
-    }
-
-    public void setDemandSideIncentive(BigDecimal demandSideIncentive) {
-        this.demandSideIncentive = demandSideIncentive;
-    }
-
-    public BigDecimal getWheelingCharge() {
-        return wheelingCharge;
-    }
-
-    public void setWheelingCharge(BigDecimal wheelingCharge) {
-        this.wheelingCharge = wheelingCharge;
-    }
-
-    public BigDecimal getSubTotalThree() {
-        return subTotalThree;
-    }
-
-    public void setSubTotalThree(BigDecimal subTotalThree) {
-        this.subTotalThree = subTotalThree;
+    public void setActualBill(BigDecimal actualBill) {
+        this.actualBill = actualBill;
     }
 
     public BigDecimal getSubsidy() {
@@ -239,124 +149,20 @@ public class FRT6MonthlyBillInformation {
         this.subsidy = subsidy;
     }
 
-    public BigDecimal getSubTotalFour() {
-        return subTotalFour;
+    public BigDecimal getCurrentBill() {
+        return currentBill;
     }
 
-    public void setSubTotalFour(BigDecimal subTotalFour) {
-        this.subTotalFour = subTotalFour;
+    public void setCurrentBill(BigDecimal currentBill) {
+        this.currentBill = currentBill;
     }
 
-    public BigDecimal getPrincipalArrear() {
-        return principalArrear;
+    public BigDecimal getArrear() {
+        return arrear;
     }
 
-    public void setPrincipalArrear(BigDecimal principalArrear) {
-        this.principalArrear = principalArrear;
-    }
-
-    public BigDecimal getCumulativeSurcharge() {
-        return cumulativeSurcharge;
-    }
-
-    public void setCumulativeSurcharge(BigDecimal cumulativeSurcharge) {
-        this.cumulativeSurcharge = cumulativeSurcharge;
-    }
-
-    public BigDecimal getAsdArrear() {
-        return asdArrear;
-    }
-
-    public void setAsdArrear(BigDecimal asdArrear) {
-        this.asdArrear = asdArrear;
-    }
-
-    public BigDecimal getNetBill() {
-        return netBill;
-    }
-
-    public void setNetBill(BigDecimal netBill) {
-        this.netBill = netBill;
-    }
-
-    public Long getPaymentForBillAndVigilance() {
-        return paymentForBillAndVigilance;
-    }
-
-    public void setPaymentForBillAndVigilance(Long paymentForBillAndVigilance) {
-        this.paymentForBillAndVigilance = paymentForBillAndVigilance;
-    }
-
-    public Long getPaymentForSmartMeterRCDC() {
-        return paymentForSmartMeterRCDC;
-    }
-
-    public void setPaymentForSmartMeterRCDC(Long paymentForSmartMeterRCDC) {
-        this.paymentForSmartMeterRCDC = paymentForSmartMeterRCDC;
-    }
-
-    public BigDecimal getVigilanceDueAmount() {
-        return vigilanceDueAmount;
-    }
-
-    public void setVigilanceDueAmount(BigDecimal vigilanceDueAmount) {
-        this.vigilanceDueAmount = vigilanceDueAmount;
-    }
-
-    public BigDecimal getVigilanceDueInterestAmount() {
-        return vigilanceDueInterestAmount;
-    }
-
-    public void setVigilanceDueInterestAmount(BigDecimal vigilanceDueInterestAmount) {
-        this.vigilanceDueInterestAmount = vigilanceDueInterestAmount;
-    }
-
-    public BigDecimal getTotalPayableAmount() {
-        return totalPayableAmount;
-    }
-
-    public void setTotalPayableAmount(BigDecimal totalPayableAmount) {
-        this.totalPayableAmount = totalPayableAmount;
-    }
-
-    public BigDecimal getPf() {
-        return pf;
-    }
-
-    public void setPf(BigDecimal pf) {
-        this.pf = pf;
-    }
-
-    public BigDecimal getMd() {
-        return md;
-    }
-
-    public void setMd(BigDecimal md) {
-        this.md = md;
-    }
-
-    public BigDecimal getPreviousRead() {
-        return previousRead;
-    }
-
-    public void setPreviousRead(BigDecimal previousRead) {
-        this.previousRead = previousRead;
-    }
-
-    public BigDecimal getMeteredUnit() {
-        return meteredUnit;
-    }
-
-    public void setMeteredUnit(BigDecimal meteredUnit) {
-        this.meteredUnit = meteredUnit;
-    }
-
-    public BigDecimal getCurrentRead() {
-        return currentRead;
-    }
-
-    public void setCurrentRead(BigDecimal currentRead) {
-        this.currentRead = currentRead;
+    public void setArrear(BigDecimal arrear) {
+        this.arrear = arrear;
     }
 
     public BigDecimal getSurchargeDemanded() {
@@ -367,48 +173,89 @@ public class FRT6MonthlyBillInformation {
         this.surchargeDemanded = surchargeDemanded;
     }
 
+    public BigDecimal getCcbAdjustment() {
+        return ccbAdjustment;
+    }
+
+    public void setCcbAdjustment(BigDecimal ccbAdjustment) {
+        this.ccbAdjustment = ccbAdjustment;
+    }
+
+    public BigDecimal getSubTotalOne() {
+        return subTotalOne;
+    }
+
+    public void setSubTotalOne(BigDecimal subTotalOne) {
+        this.subTotalOne = subTotalOne;
+    }
+
+    public long getUnpostedPayment() {
+        return unpostedPayment;
+    }
+
+    public void setUnpostedPayment(long unpostedPayment) {
+        this.unpostedPayment = unpostedPayment;
+    }
+
+    public BigDecimal getNetBill() {
+        return netBill;
+    }
+
+    public void setNetBill(BigDecimal netBill) {
+        this.netBill = netBill;
+    }
+
+    public BigDecimal getOts2025SurchargeWaiver() {
+        return ots2025SurchargeWaiver;
+    }
+
+    public void setOts2025SurchargeWaiver(BigDecimal ots2025SurchargeWaiver) {
+        this.ots2025SurchargeWaiver = ots2025SurchargeWaiver;
+    }
+
+    public BigDecimal getOts2025UnpostedInstallmentAmount() {
+        return ots2025UnpostedInstallmentAmount;
+    }
+
+    public void setOts2025UnpostedInstallmentAmount(BigDecimal ots2025UnpostedInstallmentAmount) {
+        this.ots2025UnpostedInstallmentAmount = ots2025UnpostedInstallmentAmount;
+    }
+
+    public BigDecimal getOts2025postedInstallmentAmount() {
+        return ots2025postedInstallmentAmount;
+    }
+
+    public void setOts2025postedInstallmentAmount(BigDecimal ots2025postedInstallmentAmount) {
+        this.ots2025postedInstallmentAmount = ots2025postedInstallmentAmount;
+    }
+
     public FRT6MonthlyBillInformation() {
     }
 
-    public FRT6MonthlyBillInformation(BigDecimal energyCharge, BigDecimal fppas, BigDecimal fixedCharge, BigDecimal subTotalOne, BigDecimal electricityDuty, BigDecimal ccbAdjustment, BigDecimal subTotalTwo, BigDecimal penalCharge, BigDecimal pfSurchargeOrIncentive, BigDecimal asdInstallment, BigDecimal todRebateOrSurcharge, BigDecimal sdInterest, BigDecimal locdFactorIncentive, BigDecimal lockCredit, BigDecimal employeeRebate, BigDecimal prepaidPaymentRebate, BigDecimal onlinePaymentRebate, BigDecimal promptPaymentIncentive, BigDecimal advancePaymentIncentive, BigDecimal demandSideIncentive, BigDecimal wheelingCharge, BigDecimal subTotalThree, BigDecimal subsidy, BigDecimal subTotalFour, BigDecimal principalArrear, BigDecimal cumulativeSurcharge, BigDecimal asdArrear, BigDecimal netBill, Long paymentForBillAndVigilance, Long paymentForSmartMeterRCDC, BigDecimal vigilanceDueAmount, BigDecimal vigilanceDueInterestAmount, BigDecimal totalPayableAmount, BigDecimal pf, BigDecimal md, BigDecimal previousRead, BigDecimal meteredUnit, BigDecimal currentRead, BigDecimal surchargeDemanded) {
-        this.energyCharge = energyCharge;
-        this.fppas = fppas;
-        this.fixedCharge = fixedCharge;
-        this.subTotalOne = subTotalOne;
-        this.electricityDuty = electricityDuty;
-        this.ccbAdjustment = ccbAdjustment;
-        this.subTotalTwo = subTotalTwo;
-        this.penalCharge = penalCharge;
-        this.pfSurchargeOrIncentive = pfSurchargeOrIncentive;
-        this.asdInstallment = asdInstallment;
-        this.todRebateOrSurcharge = todRebateOrSurcharge;
-        this.sdInterest = sdInterest;
-        this.locdFactorIncentive = locdFactorIncentive;
-        this.lockCredit = lockCredit;
-        this.employeeRebate = employeeRebate;
-        this.prepaidPaymentRebate = prepaidPaymentRebate;
-        this.onlinePaymentRebate = onlinePaymentRebate;
-        this.promptPaymentIncentive = promptPaymentIncentive;
-        this.advancePaymentIncentive = advancePaymentIncentive;
-        this.demandSideIncentive = demandSideIncentive;
-        this.wheelingCharge = wheelingCharge;
-        this.subTotalThree = subTotalThree;
+    public FRT6MonthlyBillInformation(String billDuration, String paymentQuickResponseString, String paymentQuickResponseBase64, LocalDate billDate, LocalDate dueDate, LocalDate chequeDueDate, BigDecimal sdHeld, String billNo, String billMonth, BigDecimal payableAmount, BigDecimal payableTillDueDate, BigDecimal payableAfterDueDate, BigDecimal actualBill, BigDecimal subsidy, BigDecimal currentBill, BigDecimal arrear, BigDecimal surchargeDemanded, BigDecimal ccbAdjustment, BigDecimal subTotalOne, long unpostedPayment, BigDecimal netBill, BigDecimal ots2025SurchargeWaiver, BigDecimal ots2025UnpostedInstallmentAmount, BigDecimal ots2025postedInstallmentAmount) {
+        this.billDuration = billDuration;
+        this.paymentQuickResponseString = paymentQuickResponseString;
+        this.paymentQuickResponseBase64 = paymentQuickResponseBase64;
+        this.billDate = billDate;
+        this.dueDate = dueDate;
+        this.chequeDueDate = chequeDueDate;
+        this.sdHeld = sdHeld;
+        this.billNo = billNo;
+        this.billMonth = billMonth;
+        this.payableAmount = payableAmount;
+        this.payableTillDueDate = payableTillDueDate;
+        this.payableAfterDueDate = payableAfterDueDate;
+        this.actualBill = actualBill;
         this.subsidy = subsidy;
-        this.subTotalFour = subTotalFour;
-        this.principalArrear = principalArrear;
-        this.cumulativeSurcharge = cumulativeSurcharge;
-        this.asdArrear = asdArrear;
-        this.netBill = netBill;
-        this.paymentForBillAndVigilance = paymentForBillAndVigilance;
-        this.paymentForSmartMeterRCDC = paymentForSmartMeterRCDC;
-        this.vigilanceDueAmount = vigilanceDueAmount;
-        this.vigilanceDueInterestAmount = vigilanceDueInterestAmount;
-        this.totalPayableAmount = totalPayableAmount;
-        this.pf = pf;
-        this.md = md;
-        this.previousRead = previousRead;
-        this.meteredUnit = meteredUnit;
-        this.currentRead = currentRead;
+        this.currentBill = currentBill;
+        this.arrear = arrear;
         this.surchargeDemanded = surchargeDemanded;
+        this.ccbAdjustment = ccbAdjustment;
+        this.subTotalOne = subTotalOne;
+        this.unpostedPayment = unpostedPayment;
+        this.netBill = netBill;
+        this.ots2025SurchargeWaiver = ots2025SurchargeWaiver;
+        this.ots2025UnpostedInstallmentAmount = ots2025UnpostedInstallmentAmount;
+        this.ots2025postedInstallmentAmount = ots2025postedInstallmentAmount;
     }
 }

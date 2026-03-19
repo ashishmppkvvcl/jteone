@@ -9,8 +9,8 @@ import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class HtmlToPdfWkOpenService {
-    private static final Logger log = LoggerFactory.getLogger(HtmlToPdfWkOpenService.class);
+public class WkHtmlToPdfService {
+    private static final Logger log = LoggerFactory.getLogger(WkHtmlToPdfService.class);
 
     @Value("${html.pdf.converter.api}")
     private String apiUrl;

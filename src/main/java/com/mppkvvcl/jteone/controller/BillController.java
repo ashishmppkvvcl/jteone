@@ -22,6 +22,34 @@ public class BillController {
     @Autowired
     private BillServiceImpl billServiceImpl;
 
+    @GetMapping(value = "download/id/{billId}/f/{fileFormat}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> downloadBill(@PathVariable("billId") long billId, @PathVariable("fileFormat") String fileFormat) {
+        log.info("API Call /bill/download/id/{}/f/{}", billId, fileFormat);
+        final MessageDTO messageDTO = new MessageDTO();
+        if (StringUtils.isEmpty(fileFormat)) {
+            messageDTO.setMessage("Input param(s) is null");
+            log.info(messageDTO.getMessage());
+            return ResponseEntity.badRequest().body(messageDTO);
+        }
+        if (!"PDF".equalsIgnoreCase(fileFormat) && !"HTML".equalsIgnoreCase(fileFormat)) {
+            messageDTO.setMessage("Invalid file format: ".concat(fileFormat));
+            log.info(messageDTO.getMessage());
+            return ResponseEntity.badRequest().body(messageDTO);
+        }
+
+        byte[] out = billServiceImpl.downloadBill(billId, fileFormat, messageDTO);
+
+        if (out == null) {
+            if (StringUtils.isEmpty(messageDTO.getMessage())) {
+                messageDTO.setMessage("Unexpected scenario occurred while preparing bill");
+                log.error(messageDTO.getMessage());
+            }
+            return ResponseEntity.badRequest().body(messageDTO);
+        }
+
+        return ResponseEntity.ok().body(out);
+    }
+
     @GetMapping(value = "download/c/{consumerNo}/f/{fileFormat}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> downloadLatestBill(@PathVariable("consumerNo") String consumerNo, @PathVariable("fileFormat") String fileFormat) {
         log.info("API Call /bill/download/c/{}/f/{}", consumerNo, fileFormat);

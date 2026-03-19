@@ -1,9 +1,6 @@
 package com.mppkvvcl.jteone.dtos.templates;
 
-import com.mppkvvcl.jteone.dtos.templates.pdfbill.CompanyInformation;
-import com.mppkvvcl.jteone.dtos.templates.pdfbill.FRT6MonthlyBillInformation;
-import com.mppkvvcl.jteone.dtos.templates.pdfbill.FRT6MonthlyConsumerInformation;
-import com.mppkvvcl.jteone.dtos.templates.pdfbill.TemplateInformation;
+import com.mppkvvcl.jteone.dtos.templates.pdfbill.*;
 import com.mppkvvcl.jteone.interfaces.JteTemplateInterface;
 
 import java.util.List;
@@ -14,7 +11,13 @@ public class BillFRT6MonthlyTemplate implements JteTemplateInterface {
     private CompanyInformation companyInformation;
     private FRT6MonthlyConsumerInformation consumerInformation;
     private FRT6MonthlyBillInformation billInformation;
-    private List<String> messages;
+    private ContactInformation contactInformation;
+    private List<String> messageList;
+
+    @Override
+    public String getConsumerNo() {
+        return consumerInformation == null ? null : consumerInformation.getConsumerNo();
+    }
 
     public TemplateInformation getTemplateInformation() {
         return templateInformation;
@@ -48,12 +51,20 @@ public class BillFRT6MonthlyTemplate implements JteTemplateInterface {
         this.billInformation = billInformation;
     }
 
-    public List<String> getMessages() {
-        return messages;
+    public ContactInformation getContactInformation() {
+        return contactInformation;
     }
 
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
+    public void setContactInformation(ContactInformation contactInformation) {
+        this.contactInformation = contactInformation;
+    }
+
+    public List<String> getMessageList() {
+        return messageList;
+    }
+
+    public void setMessageList(List<String> messageList) {
+        this.messageList = messageList;
     }
 
     @Override
@@ -63,7 +74,8 @@ public class BillFRT6MonthlyTemplate implements JteTemplateInterface {
                 ", companyInformation=" + companyInformation +
                 ", consumerInformation=" + consumerInformation +
                 ", billInformation=" + billInformation +
-                ", messages=" + messages +
+                ", contactInformation=" + contactInformation +
+                ", messageList=" + messageList +
                 '}';
     }
 }
